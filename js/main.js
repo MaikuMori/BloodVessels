@@ -123,6 +123,8 @@ var app = {
             color: 0x666666,
             opacity: 1
         });
+        
+        this.map = new Map().generate().addToScene(this.scene);
 
         //Start the animation
         this.mainLoop();
