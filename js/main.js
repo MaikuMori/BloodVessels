@@ -131,34 +131,34 @@ var app = {
         this.beat();
 
         // My vessel.
-        var circleRadius = 50;
-        var vesselShape = new THREE.Shape();
-        vesselShape.moveTo(circleRadius, 10);
-        vesselShape.absarc(10, 10, 40, 0, Math.PI * 2, false);
-        circleRadius = 40;
-        var vesselHolePath = new THREE.Path();
-        vesselShape.moveTo(circleRadius, 10);
-        vesselHolePath.moveTo(0, circleRadius);
-        vesselHolePath.absarc(10, 10, 40, 0, Math.PI * 2, false);
-        vesselShape.holes.push(vesselHolePath);
+//        var circleRadius = 50;
+//        var vesselShape = new THREE.Shape();
+//        vesselShape.moveTo(circleRadius, 10);
+//        vesselShape.absarc(10, 10, 40, 0, Math.PI * 2, false);
+//        circleRadius = 40;
+//        var vesselHolePath = new THREE.Path();
+//        vesselShape.moveTo(circleRadius, 10);
+//        vesselHolePath.moveTo(0, circleRadius);
+//        vesselHolePath.absarc(10, 10, 40, 0, Math.PI * 2, false);
+//        vesselShape.holes.push(vesselHolePath);
 
-        var extrudeSettings = { amount: 50 };
-        var geometry = new THREE.ExtrudeGeometry(vesselShape, extrudeSettings);
-
-        var mesh = THREE.SceneUtils.createMultiMaterialObject(
-            geometry, [
-                new THREE.MeshLambertMaterial({ color: '#11dd11' }),
-                new THREE.MeshBasicMaterial({ color: 0x000000,
-                    wireframe: true,
-                    transparent: true})
-            ]
-        );
-        this.scene.add(mesh);
-
-        var points = vesselShape.createPointsGeometry();
-        var line = new THREE.Line(points, new THREE.LineBasicMaterial({linewidth: 2 }));
-
-        this.scene.add(line);
+//        var extrudeSettings = { amount: 50 };
+//        var geometry = new THREE.ExtrudeGeometry(vesselShape, extrudeSettings);
+//
+//        var mesh = THREE.SceneUtils.createMultiMaterialObject(
+//            geometry, [
+//                new THREE.MeshLambertMaterial({ color: '#11dd11' }),
+//                new THREE.MeshBasicMaterial({ color: 0x000000,
+//                    wireframe: true,
+//                    transparent: true})
+//            ]
+//        );
+//        this.scene.add(mesh);
+//
+//        var points = vesselShape.createPointsGeometry();
+//        var line = new THREE.Line(points, new THREE.LineBasicMaterial({linewidth: 2 }));
+//
+//        this.scene.add(line);
 
         // GUI.
         this.GUI = new dat.GUI();
@@ -244,7 +244,7 @@ var app = {
             
         this.map.checkPosition(this.playerPlaceholder.position);
         this.camera.position.x += this.moveBy.x * dt;
-        this.camera.position.y += this.moveBy.y + (this.pulse * 0.03) * dt;
+        this.camera.position.y += this.moveBy.y * dt;
         this.camera.rotation.z = app.playerPlaceholder.rotation.z;
         //this.camera.position.z
 
