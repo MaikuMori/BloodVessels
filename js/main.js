@@ -18,8 +18,8 @@ var app = {
 
     stats: new Stats(),
 
-    cameraLookahead: 1,
-    cameraDistanceY: 1000,
+    cameraLookahead: 0,
+    cameraDistanceZ: 800,
 
     updateTimeDelta: function () {
         "use strict";
@@ -64,7 +64,7 @@ var app = {
         // (Field of vision, Aspect ratio, nearest point, farest point)
         this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 2000);
 
-        this.camera.position.set(0, 1, -this.cameraLookahead);
+        this.camera.position.set(0, 0, 100);
 
         //Create a new scene
         this.scene = new THREE.Scene();
@@ -84,13 +84,10 @@ var app = {
         this.scene.add(this.dLight);
 
         var lineGeometry = new THREE.Geometry();
-        lineGeometry.vertices.push(new THREE.Vector3(0, 0, 1000));
-        lineGeometry.vertices.push(new THREE.Vector3(-100, 0, 800));
-        lineGeometry.vertices.push(new THREE.Vector3(100, 0, 300));
-        lineGeometry.vertices.push(new THREE.Vector3(0, 0, 0));
-        lineGeometry.vertices.push(new THREE.Vector3(50, 0, -200));
-        lineGeometry.vertices.push(new THREE.Vector3(-50, 0, -500));
-        lineGeometry.vertices.push(new THREE.Vector3(0, 0, -1000));
+        lineGeometry.vertices.push(new THREE.Vector3(0, -100, 0));
+        lineGeometry.vertices.push(new THREE.Vector3(0, 100, 0));
+        lineGeometry.vertices.push(new THREE.Vector3(-100, 0, 0));
+        lineGeometry.vertices.push(new THREE.Vector3(100, 0, 0));
 
         var line = new THREE.Line(lineGeometry, new THREE.LineBasicMaterial({ color: 0xffcc00, linewidth: 5 }));
 
@@ -112,7 +109,8 @@ var app = {
             new THREE.MeshLambertMaterial({ color: 0xff00ff })
         );
         this.playerPlaceholder.position.x = 0;
-        this.playerPlaceholder.position.z = 1100;
+        this.playerPlaceholder.position.y = 0;
+        this.playerPlaceholder.position.z = 0;
         this.scene.add(this.playerPlaceholder);
 
         //Draw the bottom grid
@@ -124,23 +122,6 @@ var app = {
             color: 0x666666,
             opacity: 1
         });
-
-        for (var  i = 40; i >= 0; i--) {
-            var line = new THREE.Line(this.geometry, this.material);
-            line.position.y = 0;
-            line.position.z = (i * 50) - 1000;
-            this.scene.add(line);
-
-            line = new THREE.Line(this.geometry, this.material);
-            line.position.x = (i * 50) - 1000;
-            line.position.y = 0;
-            line.rotation.y = 90 * Math.PI / 180;
-            this.scene.add(line);
-
-        }
-
-        this.strugleVector = THREE.Vector2(0, 0);
-        this.streamForce = THREE.Vector2(0, 0);
 
         //Start the animation
         this.mainLoop();
@@ -168,15 +149,16 @@ var app = {
 
         app.playerPlaceholder.position.set(
             app.playerPlaceholder.position.x + Math.sin(app.tick / 500),
-            app.playerPlaceholder.position.y,
-            app.playerPlaceholder.position.z - 3
+            app.playerPlaceholder.position.y + (app.tick/2000),
+            app.playerPlaceholder.position.z
         );
         app.camera.position.set(
             app.playerPlaceholder.position.x,
-            app.playerPlaceholder.position.y + app.cameraDistanceY,
-            app.playerPlaceholder.position.z + app.cameraLookahead);
+            app.playerPlaceholder.position.y,
+            app.playerPlaceholder.position.z + app.cameraDistanceZ //  // + app.cameraLookahea
+        );
         app.camera.lookAt(
-            new THREE.Vector3(app.camera.position.x, 0, app.camera.position.z - app.cameraLookahead)
+            new THREE.Vector3(app.playerPlaceholder.position.x, app.playerPlaceholder.position.y, 0)
         );
 
         window.requestAnimFrame(app.mainLoop);
