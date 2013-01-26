@@ -160,7 +160,8 @@ var app = {
         if (app.keyboard.pressed('down')) {
             dY -= 0.05;
         } else if (app.keyboard.pressed('up')) {
-            dY += 1;
+            dY += Math.sin(app.playerPlaceholder.rotation.z+(90*Math.PI/180));
+            dX += Math.cos(app.playerPlaceholder.rotation.z+(90*Math.PI/180))/100;
         }
         app.strugleVector.set(dX, dY);
     },
