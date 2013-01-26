@@ -98,7 +98,9 @@ MapPiece.prototype.getBorderPointLeft = function() {
 MapPiece.prototype.drawMap = function(scene) {
     
     var p1,p2;
-    
+
+    this.mapLines = new THREE.Object3D()
+
     // center line
     var centerLine = new THREE.Geometry();
     p1 = this.previousPiece.p1;
@@ -107,7 +109,7 @@ MapPiece.prototype.drawMap = function(scene) {
     centerLine.vertices.push(new THREE.Vector3(p2.x, p2.y, 0));
     this.centerLineThree = new THREE.Line(centerLine, 
             new THREE.LineBasicMaterial({ color: 0xffcc00, linewidth: 2 }));
-    scene.add(this.centerLineThree);
+    this.mapLines.add(this.centerLineThree);
     
     // right line 
     var rightLine = new THREE.Geometry();
@@ -117,7 +119,7 @@ MapPiece.prototype.drawMap = function(scene) {
     rightLine.vertices.push(new THREE.Vector3(p2.x, p2.y, 0));
     this.rightLineThree = new THREE.Line(rightLine, 
             new THREE.LineBasicMaterial({ color: 0xcc00ff, linewidth: 2 }));
-    scene.add(this.rightLineThree);
+    this.mapLines.add(this.rightLineThree);
     
     // left line 
     var leftLine = new THREE.Geometry();
@@ -127,8 +129,10 @@ MapPiece.prototype.drawMap = function(scene) {
     leftLine.vertices.push(new THREE.Vector3(p2.x, p2.y, 0));
     this.leftLineThree = new THREE.Line(leftLine, 
             new THREE.LineBasicMaterial({ color: 0x00ffcc, linewidth: 2 }));
-    scene.add(this.leftLineThree);
-    
+    this.mapLines.add(this.leftLineThree);
+
+    scene.add(this.mapLines);
+
     return this;
 }
 

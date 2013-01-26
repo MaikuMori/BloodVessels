@@ -108,10 +108,8 @@ Map.prototype.removePiece = function(scene) {
     var piece = this.firstPiece;
     var nextPiece = this.firstPiece.connected_peaces[0];
     this.firstPiece = nextPiece;
-    
-    scene.remove(piece.centerLineThree);
-    scene.remove(piece.rightLineThree);
-    scene.remove(piece.leftLineThree);
+
+    scene.remove(piece.mapLines);
     piece.connected_peaces = null;
     this.firstPiece.previousPiece = null;
     
