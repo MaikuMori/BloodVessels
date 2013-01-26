@@ -106,7 +106,7 @@ var app = {
         });
 
         // Map init.
-        this.map = new Map().generate(this.scene);
+        this.map = new Map(this.scene).generate(this.scene);
 
         // Vector init.
         this.streamForce = new THREE.Vector2(0, 1);
