@@ -198,9 +198,15 @@ var app = {
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
 
         this.map.mapLines.position.set(
-            this.map.mapLines.position.x + this.moveBy.x * dt,
-            this.map.mapLines.position.y + this.moveBy.y * dt,
+            this.map.mapLines.position.x - this.moveBy.x * dt,
+            this.map.mapLines.position.y - this.moveBy.y * dt,
             this.map.mapLines.position.z
+        );
+
+        this.map.mapLines.rotation.set(
+            this.map.mapLines.rotation.x,
+            this.map.mapLines.rotation.y,
+            this.map.mapLines.rotation.z + this.moveBy.x * 0.05 * dt
         );
 
         this.map.checkPosition(this.playerPlaceholder.position);
