@@ -197,12 +197,12 @@ var app = {
         this.streamForce.multiplyScalar(1 + this.pulse);
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
 
-        this.playerPlaceholder.position.set(
-            app.playerPlaceholder.position.x + this.moveBy.x * dt,
-            app.playerPlaceholder.position.y + this.moveBy.y * dt,
-            app.playerPlaceholder.position.z
-        );
-
+//        this.map.position.set(
+//            this.map.position.x + this.moveBy.x * dt,
+//            this.map.position.y + this.moveBy.y * dt,
+//            this.map.position.z
+//        );
+//
         this.map.checkPosition(this.playerPlaceholder.position);
         this.map.drawMore(this.scene);
 //        this.camera.position.x += this.moveBy.x * dt;
