@@ -115,7 +115,7 @@ var app = {
             opacity: 1
         });
 
-        this.map = new Map().generate(this.scene);
+        this.map = new Map().generate().addToScene(this.scene);
 
         this.streamForce = new THREE.Vector2(0, 1);
         this.strugleVector = new THREE.Vector2(0, 0);
@@ -128,37 +128,8 @@ var app = {
             this.pulseState = 1;
             setTimeout(this.beat, (1000 * 60) / this.bpm);
         }).bind(this);
+        // Start the heartbeat.
         this.beat();
-
-        // My vessel.
-//        var circleRadius = 50;
-//        var vesselShape = new THREE.Shape();
-//        vesselShape.moveTo(circleRadius, 10);
-//        vesselShape.absarc(10, 10, 40, 0, Math.PI * 2, false);
-//        circleRadius = 40;
-//        var vesselHolePath = new THREE.Path();
-//        vesselShape.moveTo(circleRadius, 10);
-//        vesselHolePath.moveTo(0, circleRadius);
-//        vesselHolePath.absarc(10, 10, 40, 0, Math.PI * 2, false);
-//        vesselShape.holes.push(vesselHolePath);
-
-//        var extrudeSettings = { amount: 50 };
-//        var geometry = new THREE.ExtrudeGeometry(vesselShape, extrudeSettings);
-//
-//        var mesh = THREE.SceneUtils.createMultiMaterialObject(
-//            geometry, [
-//                new THREE.MeshLambertMaterial({ color: '#11dd11' }),
-//                new THREE.MeshBasicMaterial({ color: 0x000000,
-//                    wireframe: true,
-//                    transparent: true})
-//            ]
-//        );
-//        this.scene.add(mesh);
-//
-//        var points = vesselShape.createPointsGeometry();
-//        var line = new THREE.Line(points, new THREE.LineBasicMaterial({linewidth: 2 }));
-//
-//        this.scene.add(line);
 
         // GUI.
         this.GUI = new dat.GUI();
@@ -180,18 +151,18 @@ var app = {
         var dX = 0, dY = 0;
 
         if (app.keyboard.pressed('left')) {
-            //dX -= 0.05;
-            app.playerPlaceholder.rotation.z += 0.05;
+            dX -= 0.05;
+           // app.playerPlaceholder.rotation.z += 0.05;
         } else if (app.keyboard.pressed('right')) {
-            //dX += 0.05;
-            app.playerPlaceholder.rotation.z -= 0.05;
+            dX += 0.05;
+           // app.playerPlaceholder.rotation.z -= 0.05;
         }
 
         if (app.keyboard.pressed('down')) {
             dY -= 0.05;
         } else if (app.keyboard.pressed('up')) {
-            dY += Math.sin(app.playerPlaceholder.rotation.z+(90*Math.PI/180));
-            dX += Math.cos(app.playerPlaceholder.rotation.z+(90*Math.PI/180))/100;
+           // dY += Math.sin(app.playerPlaceholder.rotation.z+(90*Math.PI/180));
+           // dX += Math.cos(app.playerPlaceholder.rotation.z+(90*Math.PI/180))/100;
         }
         app.strugleVector.set(dX, dY);
     },
@@ -228,7 +199,9 @@ var app = {
     },
     mainLoop: function () {
         this.stats.begin();
+        // Time delta since last frame.
         var dt = this.updateTimeDelta();
+        // Change values based on player inputs.
         this.handleInputs();
         // Figure out what's the pulse value atm.
         this.handlePulse();
@@ -244,8 +217,8 @@ var app = {
             
         this.map.checkPosition(this.playerPlaceholder.position);
         this.map.drawMore(this.scene);
-        this.camera.position.x += this.moveBy.x * dt;
-        this.camera.position.y += this.moveBy.y * dt;
+//        this.camera.position.x += this.moveBy.x * dt;
+//        this.camera.position.y += this.moveBy.y * dt;
         this.camera.rotation.z = app.playerPlaceholder.rotation.z;
         //this.camera.position.z
 
