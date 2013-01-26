@@ -4,45 +4,65 @@
  * Some guidelines: for any global (new, without parent) function, please add 'use strict'
  */
 
-var tick = 0;
-
 /**
  * Document "ready" event helper via http://stackoverflow.com/a/7053197/261857
  * (jQuery, you're cool, but we don't need you)
  */
 var ready;
 
-var cameraLookahead; // exposed for now
-
 var app = {
+    tick: 0,
+    timeDelta: 0,
+    timeCurrent: 0,
+    timeLast: + new Date(),
+
+    stats: new Stats(),
+
+    cameraLookahead: 1,
+    cameraDistanceY: 1000,
+
+    updateTimeDelta: function () {
+        "use strict";
+
+        this.timeCurrent = + new Date();
+        this.timeDelta = this.timeCurrent - this.timeLast;
+        this.timeLast = this.timeCurrent;
+        this.tick += this.timeDelta;
+
+        return this.timeDelta;
+    },
     init: function () {
         "use strict";
+
+
+        this.stats.domElement.style.position = 'absolute';
+        this.stats.domElement.style.left = '0px';
+        this.stats.domElement.style.bottom = '0px';
+        document.body.appendChild(this.stats.domElement);
+
         this.controls = false;
 
-        //Halfsize of the window
+        // Half size of the window
         this.halfWidth = window.innerWidth / 2;
         this.halfHeight = window.innerHeight / 2;
 
-        //Mouse position
+        // Mouse position
         this.mouseX = this.halfWidth;
         this.mouseY = -this.halfHeight;
 
-        //Two PI used in calculations
+        // Two PI used in calculations
         this.tau = Math.PI * 2;
-
-        this.cameraLookahead = 500;
-
 
         // Events
         window.onresize = this.onResize;
 
-        //Create container div
+        // Create container div
         this.container = document.createElement('div');
-        //Append to the body
+        // Append to the body
         document.body.appendChild(this.container);
 
-        //Create the camera
-        //(Field of vision, Aspect ratio, nearest point, farest point)
+        // Create the camera
+        // (Field of vision, Aspect ratio, nearest point, farest point)
         this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 2000);
 
         this.camera.position.set(0, 1, -this.cameraLookahead);
@@ -64,6 +84,19 @@ var app = {
         this.dLight.position.normalize();
         this.scene.add(this.dLight);
 
+        var lineGeometry = new THREE.Geometry();
+        lineGeometry.vertices.push(new THREE.Vector3(0, 0, 1000));
+        lineGeometry.vertices.push(new THREE.Vector3(-100, 0, 800));
+        lineGeometry.vertices.push(new THREE.Vector3(100, 0, 300));
+        lineGeometry.vertices.push(new THREE.Vector3(0, 0, 0));
+        lineGeometry.vertices.push(new THREE.Vector3(50, 0, -200));
+        lineGeometry.vertices.push(new THREE.Vector3(-50, 0, -500));
+        lineGeometry.vertices.push(new THREE.Vector3(0, 0, -1000));
+
+        var line = new THREE.Line(lineGeometry, new THREE.LineBasicMaterial({ color: 0xffcc00, linewidth: 5 }));
+
+        this.scene.add(line);
+
 
         //Create the renderer, append to the container
         //renderer = new THREE.CanvasRenderer();
@@ -82,7 +115,6 @@ var app = {
         this.playerPlaceholder.position.x = 0;
         this.playerPlaceholder.position.z = 1100;
         this.scene.add(this.playerPlaceholder);
-
 
         //Draw the bottom grid
         this.geometry = new THREE.Geometry();
@@ -119,24 +151,28 @@ var app = {
         return angle * (Math.PI / 180);
     },
     animate: function () {
+        app.stats.begin();
+        app.updateTimeDelta();
         //cameraLookahead += 3;
-        tick++;
+
         //Animate using requestAnimFrame
-        this.playerPlaceholder.position.set(
-            this.playerPlaceholder.position.x + Math.sin(tick / 70) * 5,
-            this.playerPlaceholder.position.y,
-            this.playerPlaceholder.position.z - 3
+        //app.cameraLookahead++;
+        app.playerPlaceholder.position.set(
+            app.playerPlaceholder.position.x + Math.sin(app.tick / 500),
+            app.playerPlaceholder.position.y,
+            app.playerPlaceholder.position.z - 3
         );
-        this.camera.position.set(
-            this.playerPlaceholder.position.x,
-            this.playerPlaceholder.position.y + 300,
-            this.playerPlaceholder.position.z + this.cameraLookahead);
-        this.camera.lookAt(
-            new THREE.Vector3(this.camera.position.x, 0, this.camera.position.z - this.cameraLookahead)
+        app.camera.position.set(
+            app.playerPlaceholder.position.x,
+            app.playerPlaceholder.position.y + app.cameraDistanceY,
+            app.playerPlaceholder.position.z + app.cameraLookahead);
+        app.camera.lookAt(
+            new THREE.Vector3(app.camera.position.x, 0, app.camera.position.z - app.cameraLookahead)
         );
 
-        this.requestAnimFrame(app.animate);
+        window.requestAnimFrame(app.animate);
         app.render();
+        app.stats.end();
     },
     render: function () {
         this.renderer.render(this.scene, this.camera);
