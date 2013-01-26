@@ -60,7 +60,7 @@ var app = {
         // (Field of vision, Aspect ratio, nearest point, farest point)
         this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 2000);
 
-        this.camera.position.set(0, 0, 100);
+        this.camera.position.set(0, 0, this.cameraDistanceZ);
 
         //Create a new scene
         this.scene = new THREE.Scene();
@@ -98,6 +98,15 @@ var app = {
         this.playerPlaceholder.position.z = 0;
         this.scene.add(this.playerPlaceholder);
 
+        this.playerDirection = new THREE.Mesh(
+            new THREE.SphereGeometry(5, 5, 5),
+            new THREE.MeshLambertMaterial({ color: 0xff00ff })
+        );
+        this.playerDirection.position.x = 0;
+        this.playerDirection.position.y = 10;
+        this.playerDirection.position.z = 0;
+        this.playerPlaceholder.add(this.playerDirection);
+
         //Draw the bottom grid
         this.geometry = new THREE.Geometry();
         this.geometry.vertices.push(new THREE.Vector3(-1000, 0, 0));
@@ -132,8 +141,10 @@ var app = {
 
         if (app.keyboard.pressed('left')) {
             dX -= 0.05;
+            app.playerPlaceholder.rotation.z += 0.05;
         } else if (app.keyboard.pressed('right')) {
             dX += 0.05;
+            app.playerPlaceholder.rotation.z -= 0.05;
         }
 
         if (app.keyboard.pressed('down')) {
@@ -157,14 +168,22 @@ var app = {
             app.playerPlaceholder.position.y + this.moveBy.y * td,
             app.playerPlaceholder.position.z
         );
+
+        this.camera.position.x += this.moveBy.x * td;
+        this.camera.position.y += this.moveBy.y * td;
+        this.camera.rotation.z = app.playerPlaceholder.rotation.z;
+        //this.camera.position.z
+
+        /*
         this.camera.position.set(
             this.playerPlaceholder.position.x,
             this.playerPlaceholder.position.y,
             this.playerPlaceholder.position.z + this.cameraDistanceZ //  // + app.cameraLookahea
         );
         this.camera.lookAt(
-            new THREE.Vector3(this.playerPlaceholder.position.x, this.playerPlaceholder.position.y, 0)
+            this.playerPlaceholder.position
         );
+        */
 
         window.requestAnimFrame(app.mainLoop);
         this.render();
