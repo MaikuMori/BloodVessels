@@ -140,10 +140,10 @@ var app = {
         var dX = 0, dY = 0;
 
         if (app.keyboard.pressed('left')) {
-            dX -= 0.05;
+            //dX -= 0.05;
             app.playerPlaceholder.rotation.z += 0.05;
         } else if (app.keyboard.pressed('right')) {
-            dX += 0.05;
+            //dX += 0.05;
             app.playerPlaceholder.rotation.z -= 0.05;
         }
 
