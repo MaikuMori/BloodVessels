@@ -30,20 +30,10 @@ var app = {
     init: function () {
         "use strict";
 
-
         this.stats.domElement.style.position = 'absolute';
         this.stats.domElement.style.left = '0px';
         this.stats.domElement.style.bottom = '0px';
         document.body.appendChild(this.stats.domElement);
-
-        this.controls = false;
-
-        // Half size of the window
-        this.halfWidth = window.innerWidth / 2;
-        this.halfHeight = window.innerHeight / 2;
-
-        // Two PI used in calculations
-        this.tau = Math.PI * 2;
 
         // Init keyboard state.
         this.keyboard = new THREEx.KeyboardState();
@@ -115,12 +105,15 @@ var app = {
             opacity: 1
         });
 
-        this.map = new Map().generate().addToScene(this.scene);
+        // Map init.
+        this.map = new Map().generate(this.scene);
 
+        // Vector init.
         this.streamForce = new THREE.Vector2(0, 1);
         this.strugleVector = new THREE.Vector2(0, 0);
         this.moveBy = new THREE.Vector2(0, 0);
 
+        // Pulse stuff.
         this.pulse = 0.01;
         this.pulseState = 0;
         this.bpm = 60.0;
@@ -140,13 +133,6 @@ var app = {
         this.mainLoop = this.mainLoop.bind(this);
         this.mainLoop();
     },
-    onResize: function (e) {
-
-    },
-    radians: function (angle) {
-        //Angle supplied in degrees, needs to be converted to radians
-        return angle * (Math.PI / 180);
-    },
     handleInputs: function () {
         var dX = 0, dY = 0;
 
@@ -161,6 +147,7 @@ var app = {
         if (app.keyboard.pressed('down')) {
             dY -= 0.05;
         } else if (app.keyboard.pressed('up')) {
+            dY += 0.05;
            // dY += Math.sin(app.playerPlaceholder.rotation.z+(90*Math.PI/180));
            // dX += Math.cos(app.playerPlaceholder.rotation.z+(90*Math.PI/180))/100;
         }
