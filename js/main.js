@@ -141,7 +141,7 @@ var app = {
         }
 
         //Start the animation
-        this.animate();
+        this.mainLoop();
     },
     onResize: function (e) {
 
@@ -150,13 +150,14 @@ var app = {
         //Angle supplied in degrees, needs to be converted to radians
         return angle * (Math.PI / 180);
     },
-    animate: function () {
+    handleInputs: function () {
+        return;
+    },
+    mainLoop: function () {
         app.stats.begin();
         app.updateTimeDelta();
-        //cameraLookahead += 3;
+        app.handleInputs();
 
-        //Animate using requestAnimFrame
-        //app.cameraLookahead++;
         app.playerPlaceholder.position.set(
             app.playerPlaceholder.position.x + Math.sin(app.tick / 500),
             app.playerPlaceholder.position.y,
@@ -170,7 +171,7 @@ var app = {
             new THREE.Vector3(app.camera.position.x, 0, app.camera.position.z - app.cameraLookahead)
         );
 
-        window.requestAnimFrame(app.animate);
+        window.requestAnimFrame(app.mainLoop);
         app.render();
         app.stats.end();
     },
