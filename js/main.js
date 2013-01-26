@@ -125,10 +125,14 @@ var app = {
         
         this.map = new Map().generate().addToScene(this.scene);
 
-        this.streamForce = THREE.Vector2(0, 1);
-        this.strugleVector = THREE.Vector2(0, 0);
+        this.streamForce = new THREE.Vector2(0, 1);
+        this.strugleVector = new THREE.Vector2(0, 0);
+        this.moveBy = new THREE.Vector2(0, 0);
+
+
 
         //Start the animation
+        this.mainLoop = this.mainLoop.bind(this);
         this.mainLoop();
     },
     onResize: function (e) {
@@ -139,38 +143,42 @@ var app = {
         return angle * (Math.PI / 180);
     },
     handleInputs: function () {
+        var dX = 0, dY = 0;
+
         if (app.keyboard.pressed('left')) {
-            app.strugleVector.set(0, -0.5);
+            dX -= 0.5;
+            app.strugleVector.set(-0.5, 0);
         } else if (app.keyboard.pressed('right')) {
-            app.strugleVector.set(0, 0.5);
+            dX += 0.5;
         }
+        app.strugleVector.set(dX, 0);
     },
     mainLoop: function () {
-        app.stats.begin();
-        app.updateTimeDelta();
-        app.handleInputs();
+        this.stats.begin();
+        this.updateTimeDelta();
+        this.handleInputs();
 
-        //app.streamForce.set(0.1, 0);
+        this.streamForce.set(0, 0.1);
+        this.moveBy.addVectors(this.streamForce, this.strugleVector);
 
 
-//        app.playerPlaceholder.position.add(app.strugleVector);
-//        set(
-//            app.playerPlaceholder.position.x + Math.sin(app.tick / 500),
-//            app.playerPlaceholder.position.y + (app.tick/2000),
-//            app.playerPlaceholder.position.z
-//        );
-        app.camera.position.set(
-            app.playerPlaceholder.position.x,
-            app.playerPlaceholder.position.y,
-            app.playerPlaceholder.position.z + app.cameraDistanceZ //  // + app.cameraLookahea
+        this.playerPlaceholder.position.set(
+            app.playerPlaceholder.position.x + this.moveBy.x,
+            app.playerPlaceholder.position.y + this.moveBy.y,
+            app.playerPlaceholder.position.z
         );
-        app.camera.lookAt(
-            new THREE.Vector3(app.playerPlaceholder.position.x, app.playerPlaceholder.position.y, 0)
+        this.camera.position.set(
+            this.playerPlaceholder.position.x,
+            this.playerPlaceholder.position.y,
+            this.playerPlaceholder.position.z + this.cameraDistanceZ //  // + app.cameraLookahea
+        );
+        this.camera.lookAt(
+            new THREE.Vector3(this.playerPlaceholder.position.x, this.playerPlaceholder.position.y, 0)
         );
 
         window.requestAnimFrame(app.mainLoop);
-        app.render();
-        app.stats.end();
+        this.render();
+        this.stats.end();
     },
     render: function () {
         this.renderer.render(this.scene, this.camera);
