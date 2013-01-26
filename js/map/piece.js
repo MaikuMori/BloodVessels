@@ -12,8 +12,7 @@ Point.prototype.randomPos = function() {
 
 Point.prototype.startPos = function() {
     this.x = 0;
-    this.y = 0;
-    this.angle = 90;
+    this.y = -200;
     return this;
 }
 
@@ -28,22 +27,29 @@ function MapPiece(previousPiece) {
     
     this.previousPiece = previousPiece;
     this.connected_peaces = new Array();
-    this.wallDistance = 10;
+    this.wallDistance = 50;
     
     
     // initialize first piece
     if(!previousPiece) {
         this.p1 = new Point().startPos();
         this.angle = 90;
-        this.p2 = new Point().randomPosAtDistance(this.p1, 50, this.angle);
+        //this.p2 = new Point().randomPosAtDistance(this.p1, 100, this.angle);
     }
     else {
-        this.p1 = this.previousPiece.p2;
+        //this.p1 = this.previousPiece.p2;
         this.angle = this.previousPiece.angle;
-        this.angle+= 30;//Math.random()*30-15;
-        this.p2 = new Point().randomPosAtDistance(this.p1, 50, this.angle);
+        this.randomizeAngle()
+        this.p1 = new Point().randomPosAtDistance(this.previousPiece.p1, 10, this.angle);
         this.previousPiece.addChidPiece(this);
     }
+}
+
+MapPiece.prototype.randomizeAngle = function(){
+    this.angle+= Math.random()*20-10;
+    
+    if(this.angle > 150)this.angle = 150;
+    if(this.angle < 60) this.angle = 60;
 }
 
 MapPiece.prototype.addChidPiece = function(piece) {
@@ -56,34 +62,74 @@ MapPiece.prototype.getNextPiece = function() {
     return this.connected_peaces[0];
 }
 
-MapPiece.prototype.getBorder = function() {
+MapPiece.prototype.getBorderPointRight = function() {
+    
+    return new Point(this.p1.x+100,this.p1.y)
+    
     
     var p1 = this.previousPiece.p1;
-    var p2 = this.p1;
-    var p3 = this.p2;
+    var p2 = this.previousPiece.p2;
+    var p3 = this.p1;
+    var p4 = this.p2;
     
-    var l1k = (p1.x-p2.x)/(p1.y-p2.y);
-    var l2k = (p2.x-p3.x)/(p2.y-p3.y);
+    var k1 = (p2.x-p1.x)/(p2.y-p1.y);
+    var k2 = (p4.x-p3.x)/(p4.y-p3.y);
     
-    var l1p1 = this.moveDist(p1, this.wallDistance, l1k);
-    var l1p2 = this.moveDist(p2, this.wallDistance, l1k);
+    var l1p1 = this.moveDist(p1, this.wallDistance, k1);
+    var l1p2 = this.moveDist(p2, this.wallDistance, k1);
     
-    var l2p1 = this.moveDist(p2, this.wallDistance, l2k);
-    var l2p2 = this.moveDist(p3, this.wallDistance, l2k);
+    var l2p1 = this.moveDist(p3, this.wallDistance, k2);
+    var l2p2 = this.moveDist(p4, this.wallDistance, k2);
     
     // intersection point between two lines at a distance
-    var x = (-l2k*l1p1.x+l1p1.y+l1k*l2p2.x-l2p2.y)/(l1k-l2k);
-    var y = l1k(x-l2p2.x)+l2p2.y;
-    
+    var x = (-k2*l1p2.x+l1p2.y+k1*l2p1.x-l2p1.y)/(k1-k2);
+    //console.log(x-p2.x);
+    var y = k2*(x-l2p1.x)+l2p1.y;
+    //console.log(y-p2.y);
+    //console.log(x,y);
     return new Point(x,y);
+}
+
+MapPiece.prototype.getBorderPointLeft = function() {
+    
+    return new Point(this.p1.x-100,this.p1.y)
 }
 
 MapPiece.prototype.moveDist = function(point, dist, k) {
     
-    var a = Math.atan(k);
-    var dx = this.wallDistance*Math.cos(a);
-    var dy = this.wallDistance*Math.sin(a);
+    var x1 = point.x;
+    var y1 = point.y;
     
-    return new Point(point.x+dx, point.y+dy);
+    var x2 = x1+5;
+    
+    var y2 = k*(x2-x1)+y1;
+    
+    //return new Point(x2,y2);
+    
+    var dx3 = x2-x1;
+    var dy3 = y2-y1;
+    
+    var len = Math.sqrt((dx3)*(dx3)+(dy3)*(dy3));
+    
+    dx3 = dx3/len*dist;
+    dy3 = dy3/len*dist;
+    
+//    if(k>0 && k <=1) {
+//        return new Point(x1+dx3,y1+dy3);
+//    }
+//    else if(k>1) {
+//        return new Point(x1-dx3,y1-dy3);
+//    }
+//    else if(k<0 && k>=-1) {
+//        console.log(dx3, dy3);
+//        return new Point(x1+dx3,y1-dy3);
+//    }
+    return new Point(x1+dx3,y1+dy3);
+    
+//    var a = Math.atan(k);
+//    var dx = this.wallDistance*Math.cos(a);
+//    var dy = this.wallDistance*Math.sin(a);
+//    
+//    return new Point(point.x-dx, point.y+dy);
     
 }
