@@ -123,6 +123,9 @@ var app = {
             opacity: 1
         });
 
+        this.streamForce = THREE.Vector2(0, 1);
+        this.strugleVector = THREE.Vector2(0, 0);
+
         //Start the animation
         this.mainLoop();
     },
@@ -145,13 +148,15 @@ var app = {
         app.updateTimeDelta();
         app.handleInputs();
 
-        app.streamForce.set(0.1, 0);
+        //app.streamForce.set(0.1, 0);
 
-        app.playerPlaceholder.position.set(
-            app.playerPlaceholder.position.x + Math.sin(app.tick / 500),
-            app.playerPlaceholder.position.y + (app.tick/2000),
-            app.playerPlaceholder.position.z
-        );
+
+//        app.playerPlaceholder.position.add(app.strugleVector);
+//        set(
+//            app.playerPlaceholder.position.x + Math.sin(app.tick / 500),
+//            app.playerPlaceholder.position.y + (app.tick/2000),
+//            app.playerPlaceholder.position.z
+//        );
         app.camera.position.set(
             app.playerPlaceholder.position.x,
             app.playerPlaceholder.position.y,
