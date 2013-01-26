@@ -46,15 +46,14 @@ var app = {
         this.halfWidth = window.innerWidth / 2;
         this.halfHeight = window.innerHeight / 2;
 
-        // Mouse position
-        this.mouseX = this.halfWidth;
-        this.mouseY = -this.halfHeight;
-
         // Two PI used in calculations
         this.tau = Math.PI * 2;
 
         // Events
-        window.onresize = this.onResize;
+        // window.onresize = this.onResize;
+
+        // Init keyboard state.
+        this.keyboard = new THREEx.KeyboardState();
 
         // Create container div
         this.container = document.createElement('div');
@@ -140,6 +139,9 @@ var app = {
 
         }
 
+        this.strugleVector = THREE.Vector2(0, 0);
+        this.streamForce = THREE.Vector2(0, 0);
+
         //Start the animation
         this.mainLoop();
     },
@@ -151,12 +153,18 @@ var app = {
         return angle * (Math.PI / 180);
     },
     handleInputs: function () {
-        return;
+        if (app.keyboard.pressed('left')) {
+            app.strugleVector.set(0, -0.5);
+        } else if (app.keyboard.pressed('right')) {
+            app.strugleVector.set(0, 0.5);
+        }
     },
     mainLoop: function () {
         app.stats.begin();
         app.updateTimeDelta();
         app.handleInputs();
+
+        app.streamForce.set(0.1, 0);
 
         app.playerPlaceholder.position.set(
             app.playerPlaceholder.position.x + Math.sin(app.tick / 500),
