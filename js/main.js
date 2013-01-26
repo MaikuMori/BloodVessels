@@ -4,10 +4,6 @@
  * Some guidelines: for any global (new, without parent) function, please add 'use strict'
  */
 
-/**
- * Document "ready" event helper via http://stackoverflow.com/a/7053197/261857
- * (jQuery, you're cool, but we don't need you)
- */
 var ready;
 
 var app = {
@@ -122,7 +118,7 @@ var app = {
             color: 0x666666,
             opacity: 1
         });
-        
+
         this.map = new Map().generate().addToScene(this.scene);
 
         this.streamForce = THREE.Vector2(0, 1);
