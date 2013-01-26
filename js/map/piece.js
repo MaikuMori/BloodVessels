@@ -12,15 +12,15 @@ Point.prototype.randomPos = function() {
 
 Point.prototype.startPos = function() {
     this.x = 0;
-    this.y = 1000;
+    this.y = 0;
+    this.angle = 90;
     return this;
 }
 
-Point.prototype.randomPosAtDistance = function(p, distance) {
+Point.prototype.randomPosAtDistance = function(p, distance, angle) {
     
-    var angle = 120;// Math.random()*    60-30;
     this.x = p.x+distance*Math.cos(angle*Math.PI/180);
-    this.y = p.y+distance*Math.cos(angle*Math.PI/180);
+    this.y = p.y+distance*Math.sin(angle*Math.PI/180);
     return this;
 }
 
@@ -34,11 +34,14 @@ function MapPiece(previousPiece) {
     // initialize first piece
     if(!previousPiece) {
         this.p1 = new Point().startPos();
-        this.p2 = new Point().randomPosAtDistance(this.p1, 50);
+        this.angle = 90;
+        this.p2 = new Point().randomPosAtDistance(this.p1, 50, this.angle);
     }
     else {
         this.p1 = this.previousPiece.p2;
-        this.p2 = new Point().randomPosAtDistance(this.p1, 50);
+        this.angle = this.previousPiece.angle;
+        this.angle+= 30;//Math.random()*30-15;
+        this.p2 = new Point().randomPosAtDistance(this.p1, 50, this.angle);
         this.previousPiece.addChidPiece(this);
     }
 }
