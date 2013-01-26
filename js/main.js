@@ -160,7 +160,7 @@ var app = {
         if (app.keyboard.pressed('down')) {
             dY -= 0.05;
         } else if (app.keyboard.pressed('up')) {
-            dY += 0.05;
+            dY += 1;
         }
         app.strugleVector.set(dX, dY);
     },
@@ -210,8 +210,8 @@ var app = {
             app.playerPlaceholder.position.z
         );
 
-        this.camera.position.x += this.moveBy.x * td;
-        this.camera.position.y += this.moveBy.y * td;
+        this.camera.position.x += this.moveBy.x * dt;
+        this.camera.position.y += this.moveBy.y + (this.pulse * 0.03) * dt;
         this.camera.rotation.z = app.playerPlaceholder.rotation.z;
         //this.camera.position.z
 
