@@ -125,6 +125,36 @@ var app = {
         }).bind(this);
         this.beat();
 
+        // My vessel.
+        var circleRadius = 50;
+        var vesselShape = new THREE.Shape();
+        vesselShape.moveTo(circleRadius, 10);
+        vesselShape.absarc(10, 10, 40, 0, Math.PI * 2, false);
+        circleRadius = 40;
+        var vesselHolePath = new THREE.Path();
+        vesselShape.moveTo(circleRadius, 10);
+        vesselHolePath.moveTo(0, circleRadius);
+        vesselHolePath.absarc(10, 10, 40, 0, Math.PI * 2, false);
+        vesselShape.holes.push(vesselHolePath);
+
+        var extrudeSettings = { amount: 50 };
+        var geometry = new THREE.ExtrudeGeometry(vesselShape, extrudeSettings);
+
+        var mesh = THREE.SceneUtils.createMultiMaterialObject(
+            geometry, [
+                new THREE.MeshLambertMaterial({ color: '#11dd11' }),
+                new THREE.MeshBasicMaterial({ color: 0x000000,
+                    wireframe: true,
+                    transparent: true})
+            ]
+        );
+        this.scene.add(mesh);
+
+        var points = vesselShape.createPointsGeometry();
+        var line = new THREE.Line(points, new THREE.LineBasicMaterial({linewidth: 2 }));
+
+        this.scene.add(line);
+
         // GUI.
         this.GUI = new dat.GUI();
         this.GUI.add(this, 'pulse', -1, 1).listen();
@@ -194,12 +224,13 @@ var app = {
         this.handleInputs();
         // Figure out what's the pulse value atm.
         this.handlePulse();
-        this.streamForce.set(0, 0.3);
+        this.streamForce.set(0, 0.05);
+        this.streamForce.multiplyScalar(1 + this.pulse);
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
 
         this.playerPlaceholder.position.set(
             app.playerPlaceholder.position.x + this.moveBy.x * dt,
-            app.playerPlaceholder.position.y + this.moveBy.y + (this.pulse * 0.03) * dt,
+            app.playerPlaceholder.position.y + this.moveBy.y * dt,
             app.playerPlaceholder.position.z
         );
         this.camera.position.set(
