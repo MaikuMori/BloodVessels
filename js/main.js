@@ -45,9 +45,6 @@ var app = {
         // Two PI used in calculations
         this.tau = Math.PI * 2;
 
-        // Events
-        // window.onresize = this.onResize;
-
         // Init keyboard state.
         this.keyboard = new THREEx.KeyboardState();
 
@@ -82,6 +79,7 @@ var app = {
         //Create the renderer, append to the container
         //renderer = new THREE.CanvasRenderer();
         this.renderer = new THREE.WebGLRenderer({'antialias': true});
+        this.renderer.setClearColorHex(0xEE1111, 1.0);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.domElement.style.position = 'absolute';
         this.renderer.domElement.style.top = '0';
@@ -123,9 +121,21 @@ var app = {
         this.strugleVector = new THREE.Vector2(0, 0);
         this.moveBy = new THREE.Vector2(0, 0);
 
+        this.pulse = 0.01;
+        this.pulseState = 0;
+        this.bpm = 60.0;
+        this.beat = (function () {
+            this.pulseState = 1;
+            setTimeout(this.beat, (1000 * 60) / this.bpm);
+        }).bind(this);
+        this.beat();
+
+        // GUI.
+        this.GUI = new dat.GUI();
+        this.GUI.add(this, 'pulse', -1, 1).listen();
 
 
-        //Start the animation
+        //Start the main loop.
         this.mainLoop = this.mainLoop.bind(this);
         this.mainLoop();
     },
@@ -154,18 +164,49 @@ var app = {
         }
         app.strugleVector.set(dX, dY);
     },
+    handlePulse: function( ) {
+        switch (this.pulseState) {
+            case 0:
+                // Do nothing.
+                break;
+            case 1:
+                // Beat.
+                this.pulse += 0.06 * (60 / this.bpm);
+                if (this.pulse > 1) {
+                    this.pulse = 1;
+                    this.pulseState = 2;
+                }
+                break;
+            case 2:
+                // Stop and recoil :D.
+                this.pulse -= 0.07 *  (60 / this.bpm);
+                if (this.pulse < -0.3) {
+                    this.pulse = -0.3;
+                    this.pulseState = 3;
+                }
+                break;
+            case 3:
+                // Even out and done.
+                this.pulse += 0.05 * (60 / this.bpm);
+                if (this.pulse > 0) {
+                    this.pulse = 0;
+                    this.pulseState = 0;
+                }
+                break;
+        }
+    },
     mainLoop: function () {
         this.stats.begin();
-        var td = this.updateTimeDelta();
+        var dt = this.updateTimeDelta();
         this.handleInputs();
-
-        this.streamForce.set(0, 0.05);
+        // Figure out what's the pulse value atm.
+        this.handlePulse();
+        this.streamForce.set(0, 0.3);
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
 
-
         this.playerPlaceholder.position.set(
-            app.playerPlaceholder.position.x + this.moveBy.x * td,
-            app.playerPlaceholder.position.y + this.moveBy.y * td,
+            app.playerPlaceholder.position.x + this.moveBy.x * dt,
+            app.playerPlaceholder.position.y + this.moveBy.y + (this.pulse * 0.03) * dt,
             app.playerPlaceholder.position.z
         );
 

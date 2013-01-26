@@ -7,3 +7,6 @@
 [submodule "js/lib/stats"]
 	path = js/lib/stats
 	url = git://github.com/mrdoob/stats.js.git
+[submodule "js/lib/dat-gui"]
+	path = js/lib/dat-gui
+	url = https://code.google.com/p/dat-gui/
