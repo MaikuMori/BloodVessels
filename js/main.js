@@ -235,13 +235,14 @@ var app = {
         this.streamForce.set(0, 0.05);
         this.streamForce.multiplyScalar(1 + this.pulse);
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
-
+            
         this.playerPlaceholder.position.set(
             app.playerPlaceholder.position.x + this.moveBy.x * dt,
             app.playerPlaceholder.position.y + this.moveBy.y * dt,
             app.playerPlaceholder.position.z
         );
-
+            
+        this.map.checkPosition(this.playerPlaceholder.position);
         this.camera.position.x += this.moveBy.x * dt;
         this.camera.position.y += this.moveBy.y + (this.pulse * 0.03) * dt;
         this.camera.rotation.z = app.playerPlaceholder.rotation.z;

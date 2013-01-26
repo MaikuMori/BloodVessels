@@ -7,7 +7,7 @@ Map.prototype.generate = function() {
     
     this.starPoint = new MapPiece();
     var previousPiece = this.starPoint;
-    for(var i =0;i<30;i++) {
+    for(var i =0;i<100;i++) {
         previousPiece = new MapPiece(previousPiece);
     }
     
@@ -50,4 +50,41 @@ Map.prototype.addToScene = function(scene) {
     scene.add(leftLineThree);
     
     return this;
+}
+
+Map.prototype.checkPosition = function(pos) {
+    
+    var x = pos.x;
+    var y = pos.y;
+    
+    var pieceBottom;
+    
+    var mapPiece = this.starPoint.getNextPiece();
+    while(typeof mapPiece !== 'undefined') {
+        
+        // user must be between two checkpoints to check his bounds
+        if(y > mapPiece.p1.y) {
+            pieceBottom = mapPiece;
+        }
+        else if(pieceBottom && y < mapPiece.p1.y) {
+            
+            var dy = y-pieceBottom.p1.y;
+            var dx = 0;
+            var pieceCenterX = pieceBottom.p1.x;//+(dy/Math.tan(pieceBottom.angle*Math.PI/180));
+//            console.log(pieceCenterX, pieceBottom.p1.x);
+            if(x > pieceCenterX+pieceBottom.wallDistance+40) {
+                dx = -1;
+            }
+            else if(x < pieceCenterX-pieceBottom.wallDistance-40) {
+                dx = 1;
+            }
+            
+            pos.set(pos.x + dx, pos.y,pos.z);
+            break;
+        }
+        
+        
+        mapPiece = mapPiece.getNextPiece();
+    }
+    
 }
