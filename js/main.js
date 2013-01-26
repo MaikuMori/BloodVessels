@@ -196,10 +196,10 @@ var app = {
         this.streamForce.multiplyScalar(1 + this.pulse);
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
 
-        this.map.mapLine.position.set(
-            this.map.mapLine.position.x + this.moveBy.x * dt,
-            this.map.mapLine.position.y + this.moveBy.y * dt,
-            this.map.mapLine.position.z
+        this.map.mapLines.position.set(
+            this.map.mapLines.position.x + this.moveBy.x * dt,
+            this.map.mapLines.position.y + this.moveBy.y * dt,
+            this.map.mapLines.position.z
         );
 
         this.map.checkPosition(this.playerPlaceholder.position);
