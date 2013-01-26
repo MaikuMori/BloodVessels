@@ -95,7 +95,7 @@ MapPiece.prototype.getBorderPointLeft = function() {
     return new Point(this.p1.x-100,this.p1.y)
 }
 
-MapPiece.prototype.drawMap = function(scene) {
+MapPiece.prototype.drawMap = function(scene, map) {
     
     var p1,p2;
 
@@ -131,8 +131,9 @@ MapPiece.prototype.drawMap = function(scene) {
             new THREE.LineBasicMaterial({ color: 0x00ffcc, linewidth: 2 }));
     this.mapLines.add(this.leftLineThree);
 
-    scene.add(this.mapLines);
-
+    //scene.add(this.mapLines);
+    
+    map.addMapLines(this.mapLines);
     return this;
 }
 

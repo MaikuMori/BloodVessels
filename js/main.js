@@ -30,10 +30,9 @@ var app = {
     init: function () {
         "use strict";
 
-        this.stats.domElement.style.position = 'fixed';
+        this.stats.domElement.style.position = 'absolute';
         this.stats.domElement.style.left = '0px';
         this.stats.domElement.style.bottom = '0px';
-        this.stats.domElement.style.zIndex = '2';
         document.body.appendChild(this.stats.domElement);
 
         // Init keyboard state.
@@ -107,7 +106,7 @@ var app = {
         });
 
         // Map init.
-        this.map = new Map().generate(this.scene);
+        this.map = new Map(this.scene).generate(this.scene);
 
         // Vector init.
         this.streamForce = new THREE.Vector2(0, 1);
@@ -197,12 +196,12 @@ var app = {
         this.streamForce.multiplyScalar(1 + this.pulse);
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
 
-//        this.map.position.set(
-//            this.map.position.x + this.moveBy.x * dt,
-//            this.map.position.y + this.moveBy.y * dt,
-//            this.map.position.z
-//        );
-//
+        this.map.mapLines.position.set(
+            this.map.mapLines.position.x + this.moveBy.x * dt,
+            this.map.mapLines.position.y + this.moveBy.y * dt,
+            this.map.mapLines.position.z
+        );
+
         this.map.checkPosition(this.playerPlaceholder.position);
         this.map.drawMore(this.scene);
 //        this.camera.position.x += this.moveBy.x * dt;

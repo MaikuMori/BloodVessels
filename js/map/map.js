@@ -1,6 +1,7 @@
 
-function Map() {
-    
+function Map(scene) {
+    this.mapLines = new THREE.Object3D();
+    scene.add(this.mapLines);
 }
 
 Map.prototype.generate = function(scene) {
@@ -8,7 +9,7 @@ Map.prototype.generate = function(scene) {
     this.firstPiece = new MapPiece();
     this.lastPiece = this.firstPiece;
     for(var i =0;i<100;i++) {
-        this.lastPiece = new MapPiece(this.lastPiece).drawMap(scene);
+        this.lastPiece = new MapPiece(this.lastPiece).drawMap(scene, this);
     }
     
     return this;
@@ -57,7 +58,7 @@ Map.prototype.drawMore = function(scene) {
     
     // a new piece is added only if one can be removed
     if(this.playerPos > 10) {
-        this.lastPiece = new MapPiece(this.lastPiece).drawMap(scene);
+        this.lastPiece = new MapPiece(this.lastPiece).drawMap(scene, this);
         this.removePiece(scene);
     }
     
@@ -71,8 +72,12 @@ Map.prototype.removePiece = function(scene) {
     var nextPiece = this.firstPiece.connected_peaces[0];
     this.firstPiece = nextPiece;
 
-    scene.remove(piece.mapLines);
+    this.mapLines.remove(piece.mapLines);
     piece.connected_peaces = null;
     this.firstPiece.previousPiece = null;
     
 };
+
+Map.prototype.addMapLines = function(mapLines) {
+    this.mapLines.add(mapLines);
+}
