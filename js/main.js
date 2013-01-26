@@ -115,7 +115,7 @@ var app = {
             opacity: 1
         });
 
-        this.map = new Map().generate().addToScene(this.scene);
+        this.map = new Map().generate(this.scene);
 
         this.streamForce = new THREE.Vector2(0, 1);
         this.strugleVector = new THREE.Vector2(0, 0);
@@ -243,6 +243,7 @@ var app = {
         );
             
         this.map.checkPosition(this.playerPlaceholder.position);
+        this.map.drawMore(this.scene);
         this.camera.position.x += this.moveBy.x * dt;
         this.camera.position.y += this.moveBy.y * dt;
         this.camera.rotation.z = app.playerPlaceholder.rotation.z;

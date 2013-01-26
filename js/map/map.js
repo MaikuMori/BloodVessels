@@ -3,12 +3,12 @@ function Map() {
     
 }
 
-Map.prototype.generate = function() {
+Map.prototype.generate = function(scene) {
     
-    this.starPoint = new MapPiece();
-    var previousPiece = this.starPoint;
+    this.firstPiece = new MapPiece();
+    this.lastPiece = this.firstPiece;
     for(var i =0;i<100;i++) {
-        previousPiece = new MapPiece(previousPiece);
+        this.lastPiece = new MapPiece(this.lastPiece).drawMap(scene);
     }
     
     return this;
@@ -20,7 +20,7 @@ Map.prototype.addToScene = function(scene) {
     var topLine = new THREE.Geometry();
     var leftLine = new THREE.Geometry();
     
-    var mapPiece = this.starPoint.getNextPiece();
+    var mapPiece = this.firstPiece.getNextPiece();
     while(typeof mapPiece !== 'undefined') {
        
         // center line
@@ -40,13 +40,13 @@ Map.prototype.addToScene = function(scene) {
         mapPiece = mapPiece.getNextPiece();
     }
 
-    var centerLineThree = new THREE.Line(centerLine, new THREE.LineBasicMaterial({ color: 0xffcc00, linewidth: 1 }));
+    var centerLineThree = new THREE.Line(centerLine, new THREE.LineBasicMaterial({ color: 0xffcc00, linewidth: 2 }));
     scene.add(centerLineThree);
     
-    var topLineThree = new THREE.Line(topLine, new THREE.LineBasicMaterial({ color: 0xcc00ff, linewidth: 1 }));
+    var topLineThree = new THREE.Line(topLine, new THREE.LineBasicMaterial({ color: 0xcc00ff, linewidth: 2 }));
     scene.add(topLineThree);
     
-    var leftLineThree = new THREE.Line(leftLine, new THREE.LineBasicMaterial({ color: 0x00ffcc, linewidth: 1 }));
+    var leftLineThree = new THREE.Line(leftLine, new THREE.LineBasicMaterial({ color: 0x00ffcc, linewidth: 2 }));
     scene.add(leftLineThree);
     
     return this;
@@ -59,7 +59,8 @@ Map.prototype.checkPosition = function(pos) {
     
     var pieceBottom;
     
-    var mapPiece = this.starPoint.getNextPiece();
+    var mapPiece = this.firstPiece.getNextPiece();
+    this.playerPos = 0;
     while(typeof mapPiece !== 'undefined') {
         
         // user must be between two checkpoints to check his bounds
@@ -85,6 +86,33 @@ Map.prototype.checkPosition = function(pos) {
         
         
         mapPiece = mapPiece.getNextPiece();
+        this.playerPos++;
     }
     
 }
+
+Map.prototype.drawMore = function(scene) {
+    
+    // a new piece is added only if one can be removed
+    if(this.playerPos > 10) {
+        this.lastPiece = new MapPiece(this.lastPiece).drawMap(scene);
+        this.removePiece(scene);
+    }
+    
+};
+
+Map.prototype.removePiece = function(scene) {
+    
+    // @FIXME this makes only possible to make one tunnel
+    // because here first child is chosen as the next tunnel
+    var piece = this.firstPiece;
+    var nextPiece = this.firstPiece.connected_peaces[0];
+    this.firstPiece = nextPiece;
+    
+    scene.remove(piece.centerLineThree);
+    scene.remove(piece.rightLineThree);
+    scene.remove(piece.leftLineThree);
+    piece.connected_peaces = null;
+    this.firstPiece.previousPiece = null;
+    
+};

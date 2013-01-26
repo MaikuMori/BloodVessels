@@ -41,7 +41,7 @@ function MapPiece(previousPiece) {
         this.angle = this.previousPiece.angle;
         this.randomizeAngle()
         this.p1 = new Point().randomPosAtDistance(this.previousPiece.p1, 10, this.angle);
-        this.previousPiece.addChidPiece(this);
+        this.previousPiece.addChildPiece(this);
     }
 }
 
@@ -52,7 +52,7 @@ MapPiece.prototype.randomizeAngle = function(){
     if(this.angle < 60) this.angle = 60;
 }
 
-MapPiece.prototype.addChidPiece = function(piece) {
+MapPiece.prototype.addChildPiece = function(piece) {
     
     this.connected_peaces.push(piece);
 }
@@ -93,6 +93,43 @@ MapPiece.prototype.getBorderPointRight = function() {
 MapPiece.prototype.getBorderPointLeft = function() {
     
     return new Point(this.p1.x-100,this.p1.y)
+}
+
+MapPiece.prototype.drawMap = function(scene) {
+    
+    var p1,p2;
+    
+    // center line
+    var centerLine = new THREE.Geometry();
+    p1 = this.previousPiece.p1;
+    p2 = this.p1;
+    centerLine.vertices.push(new THREE.Vector3(p1.x, p1.y, 0));
+    centerLine.vertices.push(new THREE.Vector3(p2.x, p2.y, 0));
+    this.centerLineThree = new THREE.Line(centerLine, 
+            new THREE.LineBasicMaterial({ color: 0xffcc00, linewidth: 2 }));
+    scene.add(this.centerLineThree);
+    
+    // right line 
+    var rightLine = new THREE.Geometry();
+    p1 = this.getBorderPointRight();
+    p2 = this.previousPiece.getBorderPointRight();
+    rightLine.vertices.push(new THREE.Vector3(p1.x,p1.y, 0));
+    rightLine.vertices.push(new THREE.Vector3(p2.x, p2.y, 0));
+    this.rightLineThree = new THREE.Line(rightLine, 
+            new THREE.LineBasicMaterial({ color: 0xcc00ff, linewidth: 2 }));
+    scene.add(this.rightLineThree);
+    
+    // left line 
+    var leftLine = new THREE.Geometry();
+    p1 = this.getBorderPointLeft();
+    p2 = this.previousPiece.getBorderPointLeft();
+    leftLine.vertices.push(new THREE.Vector3(p1.x,p1.y, 0));
+    leftLine.vertices.push(new THREE.Vector3(p2.x, p2.y, 0));
+    this.leftLineThree = new THREE.Line(leftLine, 
+            new THREE.LineBasicMaterial({ color: 0x00ffcc, linewidth: 2 }));
+    scene.add(this.leftLineThree);
+    
+    return this;
 }
 
 MapPiece.prototype.moveDist = function(point, dist, k) {
