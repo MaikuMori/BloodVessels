@@ -135,25 +135,30 @@ var app = {
         var dX = 0, dY = 0;
 
         if (app.keyboard.pressed('left')) {
-            dX -= 0.5;
-            app.strugleVector.set(-0.5, 0);
+            dX -= 0.05;
         } else if (app.keyboard.pressed('right')) {
-            dX += 0.5;
+            dX += 0.05;
         }
-        app.strugleVector.set(dX, 0);
+
+        if (app.keyboard.pressed('down')) {
+            dY -= 0.05;
+        } else if (app.keyboard.pressed('up')) {
+            dY += 0.05;
+        }
+        app.strugleVector.set(dX, dY);
     },
     mainLoop: function () {
         this.stats.begin();
-        this.updateTimeDelta();
+        var td = this.updateTimeDelta();
         this.handleInputs();
 
-        this.streamForce.set(0, 0.1);
+        this.streamForce.set(0, 0.05);
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
 
 
         this.playerPlaceholder.position.set(
-            app.playerPlaceholder.position.x + this.moveBy.x,
-            app.playerPlaceholder.position.y + this.moveBy.y,
+            app.playerPlaceholder.position.x + this.moveBy.x * td,
+            app.playerPlaceholder.position.y + this.moveBy.y * td,
             app.playerPlaceholder.position.z
         );
         this.camera.position.set(
