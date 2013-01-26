@@ -19,7 +19,7 @@ var app = {
     stats: new Stats(),
 
     cameraLookahead: 0,
-    cameraDistanceZ: 800,
+    cameraDistanceZ: 1000,
 
     updateTimeDelta: function () {
         "use strict";
@@ -82,17 +82,6 @@ var app = {
         this.dLight.position.set(1, 0, 1);
         this.dLight.position.normalize();
         this.scene.add(this.dLight);
-
-        var lineGeometry = new THREE.Geometry();
-        lineGeometry.vertices.push(new THREE.Vector3(0, -100, 0));
-        lineGeometry.vertices.push(new THREE.Vector3(0, 100, 0));
-        lineGeometry.vertices.push(new THREE.Vector3(-100, 0, 0));
-        lineGeometry.vertices.push(new THREE.Vector3(100, 0, 0));
-
-        var line = new THREE.Line(lineGeometry, new THREE.LineBasicMaterial({ color: 0xffcc00, linewidth: 5 }));
-
-        this.scene.add(line);
-
 
         //Create the renderer, append to the container
         //renderer = new THREE.CanvasRenderer();
