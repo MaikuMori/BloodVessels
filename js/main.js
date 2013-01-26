@@ -195,13 +195,13 @@ var app = {
         this.streamForce.set(0, 0.05);
         this.streamForce.multiplyScalar(1 + this.pulse);
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
-            
-//        this.map.position.set(
-//            this.map.position.x + this.moveBy.x * dt,
-//            this.map.position.y + this.moveBy.y * dt,
-//            this.map.position.z
-//        );
-//
+
+        this.map.mapLine.position.set(
+            this.map.mapLine.position.x + this.moveBy.x * dt,
+            this.map.mapLine.position.y + this.moveBy.y * dt,
+            this.map.mapLine.position.z
+        );
+
         this.map.checkPosition(this.playerPlaceholder.position);
         this.map.drawMore(this.scene);
 //        this.camera.position.x += this.moveBy.x * dt;
