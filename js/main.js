@@ -30,9 +30,10 @@ var app = {
     init: function () {
         "use strict";
 
-        this.stats.domElement.style.position = 'absolute';
+        this.stats.domElement.style.position = 'fixed';
         this.stats.domElement.style.left = '0px';
         this.stats.domElement.style.bottom = '0px';
+        this.stats.domElement.style.zIndex = '2';
         document.body.appendChild(this.stats.domElement);
 
         // Init keyboard state.
@@ -195,13 +196,13 @@ var app = {
         this.streamForce.set(0, 0.05);
         this.streamForce.multiplyScalar(1 + this.pulse);
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
-            
+
         this.playerPlaceholder.position.set(
             app.playerPlaceholder.position.x + this.moveBy.x * dt,
             app.playerPlaceholder.position.y + this.moveBy.y * dt,
             app.playerPlaceholder.position.z
         );
-            
+
         this.map.checkPosition(this.playerPlaceholder.position);
         this.map.drawMore(this.scene);
 //        this.camera.position.x += this.moveBy.x * dt;
