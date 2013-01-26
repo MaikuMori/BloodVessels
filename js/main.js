@@ -49,9 +49,6 @@ var app = {
         // Two PI used in calculations
         this.tau = Math.PI * 2;
 
-        // Events
-        // window.onresize = this.onResize;
-
         // Init keyboard state.
         this.keyboard = new THREEx.KeyboardState();
 
@@ -86,6 +83,7 @@ var app = {
         //Create the renderer, append to the container
         //renderer = new THREE.CanvasRenderer();
         this.renderer = new THREE.WebGLRenderer({'antialias': true});
+        this.renderer.setClearColorHex(0xEE1111, 1.0);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.domElement.style.position = 'absolute';
         this.renderer.domElement.style.top = '0';
@@ -114,10 +112,26 @@ var app = {
         
         this.map = new Map().generate().addToScene(this.scene);
 
-        this.streamForce = THREE.Vector2(0, 1);
-        this.strugleVector = THREE.Vector2(0, 0);
+        this.streamForce = new THREE.Vector2(0, 1);
+        this.strugleVector = new THREE.Vector2(0, 0);
+        this.moveBy = new THREE.Vector2(0, 0);
 
-        //Start the animation
+        this.pulse = 0.01;
+        this.pulseState = 0;
+        this.bpm = 60.0;
+        this.beat = (function () {
+            this.pulseState = 1;
+            setTimeout(this.beat, (1000 * 60) / this.bpm);
+        }).bind(this);
+        this.beat();
+
+        // GUI.
+        this.GUI = new dat.GUI();
+        this.GUI.add(this, 'pulse', -1, 1).listen();
+
+
+        //Start the main loop.
+        this.mainLoop = this.mainLoop.bind(this);
         this.mainLoop();
     },
     onResize: function (e) {
@@ -128,38 +142,78 @@ var app = {
         return angle * (Math.PI / 180);
     },
     handleInputs: function () {
+        var dX = 0, dY = 0;
+
         if (app.keyboard.pressed('left')) {
-            app.strugleVector.set(0, -0.5);
+            dX -= 0.05;
         } else if (app.keyboard.pressed('right')) {
-            app.strugleVector.set(0, 0.5);
+            dX += 0.05;
+        }
+
+        if (app.keyboard.pressed('down')) {
+            dY -= 0.05;
+        } else if (app.keyboard.pressed('up')) {
+            dY += 0.05;
+        }
+        app.strugleVector.set(dX, dY);
+    },
+    handlePulse: function( ) {
+        switch (this.pulseState) {
+            case 0:
+                // Do nothing.
+                break;
+            case 1:
+                // Beat.
+                this.pulse += 0.06 * (60 / this.bpm);
+                if (this.pulse > 1) {
+                    this.pulse = 1;
+                    this.pulseState = 2;
+                }
+                break;
+            case 2:
+                // Stop and recoil :D.
+                this.pulse -= 0.07 *  (60 / this.bpm);
+                if (this.pulse < -0.3) {
+                    this.pulse = -0.3;
+                    this.pulseState = 3;
+                }
+                break;
+            case 3:
+                // Even out and done.
+                this.pulse += 0.05 * (60 / this.bpm);
+                if (this.pulse > 0) {
+                    this.pulse = 0;
+                    this.pulseState = 0;
+                }
+                break;
         }
     },
     mainLoop: function () {
-        app.stats.begin();
-        app.updateTimeDelta();
-        app.handleInputs();
+        this.stats.begin();
+        var dt = this.updateTimeDelta();
+        this.handleInputs();
+        // Figure out what's the pulse value atm.
+        this.handlePulse();
+        this.streamForce.set(0, 0.3);
+        this.moveBy.addVectors(this.streamForce, this.strugleVector);
 
-        //app.streamForce.set(0.1, 0);
-
-
-//        app.playerPlaceholder.position.add(app.strugleVector);
-//        set(
-//            app.playerPlaceholder.position.x + Math.sin(app.tick / 500),
-//            app.playerPlaceholder.position.y + (app.tick/2000),
-//            app.playerPlaceholder.position.z
-//        );
-        app.camera.position.set(
-            app.playerPlaceholder.position.x,
-            app.playerPlaceholder.position.y,
-            app.playerPlaceholder.position.z + app.cameraDistanceZ //  // + app.cameraLookahea
+        this.playerPlaceholder.position.set(
+            app.playerPlaceholder.position.x + this.moveBy.x * dt,
+            app.playerPlaceholder.position.y + this.moveBy.y + (this.pulse * 0.03) * dt,
+            app.playerPlaceholder.position.z
         );
-        app.camera.lookAt(
-            new THREE.Vector3(app.playerPlaceholder.position.x, app.playerPlaceholder.position.y, 0)
+        this.camera.position.set(
+            this.playerPlaceholder.position.x,
+            this.playerPlaceholder.position.y,
+            this.playerPlaceholder.position.z + this.cameraDistanceZ //  // + app.cameraLookahea
+        );
+        this.camera.lookAt(
+            new THREE.Vector3(this.playerPlaceholder.position.x, this.playerPlaceholder.position.y, 0)
         );
 
         window.requestAnimFrame(app.mainLoop);
-        app.render();
-        app.stats.end();
+        this.render();
+        this.stats.end();
     },
     render: function () {
         this.renderer.render(this.scene, this.camera);
