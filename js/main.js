@@ -321,6 +321,23 @@ var app = {
             this.map.OMGLines.rotation.z//
         );
 
+        /**
+         * Uncomment this to see, why direction is quirky.
+         */
+        /*
+        if (app.cameraZTarget === 0)
+            app.cameraZTarget = app.map.OMGLines.rotation.z;
+
+        if (parseInt(app.cameraZTarget*10) !== parseInt(app.map.OMGLines.rotation.z*10)) {
+            if (app.map.OMGLines.rotation.z < app.cameraZTarget)
+                app.map.OMGLines.rotation.z += 0.01;
+            if (app.map.OMGLines.rotation.z > app.cameraZTarget)
+                app.map.OMGLines.rotation.z -= 0.01;
+        }
+        app.cameraZTarget = (this.map.playerPiece.angle+180+90)*Math.PI/180;
+        */
+
+        // And comment this.
         if (parseInt(app.cameraZTarget*10) !== parseInt(app.camera.rotation.z*10)) {
             if (app.camera.rotation.z < app.cameraZTarget)
                 app.camera.rotation.z += 0.01;
@@ -330,6 +347,8 @@ var app = {
         app.cameraZTarget = (this.map.playerPiece.angle+180+90)*Math.PI/180;
 
         if (!!this.playerPlaceholder) {
+
+            app.playerPlaceholder.rotation.z = app.camera.rotation.z;
             this.map.checkPosition(this.playerPlaceholder.position);
             if (!app.gameOver) {
                 this.map.drawMore(this.scene);
