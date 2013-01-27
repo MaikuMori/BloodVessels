@@ -12,7 +12,7 @@ Point.prototype.randomPos = function() {
 
 Point.prototype.startPos = function() {
     this.x = 0;
-    this.y = -200;
+    this.y = -300;
     return this;
 }
 
@@ -27,9 +27,8 @@ function MapPiece(previousPiece) {
 
     this.previousPiece = previousPiece;
     this.connected_peaces = new Array();
-    this.wallDistance = 50;
-    this.pieceDistance = 30;
-
+    this.wallDistance = 200;
+    this.pieceDistance = 100;
 
     // initialize first piece
     if(!previousPiece) {
@@ -46,7 +45,7 @@ function MapPiece(previousPiece) {
     }
 }
 
-(MapPiece.prototype.checkPointWithinPiece = function(pt) {
+MapPiece.prototype.checkPointWithinPiece = (function(pt) {
     
     var sign = function(p1,p2,p3) {
         return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
@@ -69,12 +68,19 @@ function MapPiece(previousPiece) {
         var p3 = this.previousPiece.getBorderPointLeft();
         var p4 = this.previousPiece.getBorderPointRight();
         
-        return PointInTriangle(pt,p1,p2,p3) || PointInTriangle(pt,p1,p2,p4);
+        var result = PointInTriangle(pt,p1,p2,p3) || PointInTriangle(pt,p3,p2,p4);
+        if(result) {
+            this.centerLineThree.material.color.set ( 0xffcc00 );
+        }
+        else {
+            this.centerLineThree.material.color.set ( 0x000000 );
+        }
+        return result;
     }
 })();
 
 MapPiece.prototype.randomizeAngle = function(){
-    this.angle+= Math.random()*30-20;
+    this.angle+= Math.random()*30-15;
     
     if(this.angle < 0) this.angle+=360;
     if(this.angle > 360) this.angle-=360;
@@ -120,7 +126,6 @@ MapPiece.prototype.getBorderPointRight = function() {
     dx3 = dx3/len*this.wallDistance;
     dy3 = dy3/len*this.wallDistance;
 
-    console.log(dx3, dy3);
     return new Point(x1+dx3,y1+dy3);
 
 

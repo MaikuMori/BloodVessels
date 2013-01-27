@@ -171,9 +171,23 @@ var app = {
         if (app.keyboard.pressed('left')) {
             dX -= 0.05;
            // app.playerPlaceholder.rotation.z += 0.05;
+           
+           
+           this.map.OMGLines.rotation.set(
+            this.map.OMGLines.rotation.x,
+            this.map.OMGLines.rotation.y,
+            this.map.OMGLines.rotation.z - 0.05
+        );
+           
         } else if (app.keyboard.pressed('right')) {
             dX += 0.05;
            // app.playerPlaceholder.rotation.z -= 0.05;
+           this.map.OMGLines.rotation.set(
+            this.map.OMGLines.rotation.x,
+            this.map.OMGLines.rotation.y,
+            this.map.OMGLines.rotation.z + 0.05
+        );
+           
         }
 
         if (app.keyboard.pressed('down')) {
@@ -230,24 +244,35 @@ var app = {
             (this.streamForce.x * Math.cos(rotByRad)) - (this.streamForce.y * Math.sin(rotByRad)),
             (this.streamForce.y * Math.cos(rotByRad)) + (this.streamForce.x * Math.sin(rotByRad))
         );
-        this.streamForce.normalize();
-        this.streamForce.multiplyScalar(1 + this.pulse);
-        this.moveBy.addVectors(this.streamForce, this.strugleVector);
-
+        
+//        this.streamForce.set(
+//            this.map.playerPiece.p1.x,
+//            this.map.playerPiece.p1.y
+//        );
+//            
+//        this.streamForce.normalize();
+//        this.streamForce.multiplyScalar(1 + this.pulse);
+        //this.moveBy.addVectors(this.streamForce, this.strugleVector);
+        this.moveBy = this.strugleVector;
+        
+        this.moveBy.x = this.moveBy.x*Math.sin(this.map.OMGLines.rotation.z);
+        this.moveBy.y = this.moveBy.y*Math.cos(this.map.OMGLines.rotation.z);
+        
+        
         this.map.mapLines.position.set(
-            this.map.mapLines.position.x - this.moveBy.x * 0.05 * dt,
-            this.map.mapLines.position.y - this.moveBy.y * 0.05 * dt,
+            this.map.mapLines.position.x - this.moveBy.x * 1 * dt,
+            this.map.mapLines.position.y - this.moveBy.y * 1 * dt,
             this.map.mapLines.position.z
         );
-
+        
         this.map.OMGLines.rotation.set(
             this.map.OMGLines.rotation.x,
             this.map.OMGLines.rotation.y,
-            this.map.OMGLines.rotation.z - rotByRad
+            (-this.map.playerPiece.angle+90)*Math.PI/180
         );
 
         this.map.checkPosition(this.playerPlaceholder.position);
-        this.map.drawMore(this.scene);
+        //this.map.drawMore(this.scene);
 
         if (!!this.circularSaw)
             this.circularSaw.rotation.y += dt/330+this.pulse/30;
@@ -257,6 +282,7 @@ var app = {
         window.requestAnimFrame(app.mainLoop);
         this.render();
         this.stats.end();
+        //sleep(100);
     },
     render: function () {
         this.renderer.render(this.scene, this.camera);
