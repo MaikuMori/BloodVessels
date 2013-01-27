@@ -1,7 +1,12 @@
 
 function Map(scene) {
     this.mapLines = new THREE.Object3D();
-    scene.add(this.mapLines);
+    
+    this.OMGLines = new THREE.Object3D();
+    this.OMGLines.add(this.mapLines);
+    scene.add(this.OMGLines);
+    console.log(this.OMGLines);
+    //console.log(this.mapLines);
 }
 
 Map.prototype.generate = function(scene) {

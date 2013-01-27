@@ -201,11 +201,11 @@ var app = {
             this.map.mapLines.position.y - this.moveBy.y * dt,
             this.map.mapLines.position.z
         );
-
-        this.map.mapLines.rotation.set(
-            this.map.mapLines.rotation.x,
-            this.map.mapLines.rotation.y,
-            this.map.mapLines.rotation.z + this.moveBy.x * 0.05 * dt
+        
+        this.map.OMGLines.rotation.set(
+            this.map.OMGLines.rotation.x,
+            this.map.OMGLines.rotation.y,
+            this.map.OMGLines.rotation.z + this.moveBy.x * 0.05 * dt
         );
 
         this.map.checkPosition(this.playerPlaceholder.position);
@@ -229,6 +229,9 @@ var app = {
         window.requestAnimFrame(app.mainLoop);
         this.render();
         this.stats.end();
+        
+//        console.log(this.map.OMGLines);
+//        debugger;
     },
     render: function () {
         this.renderer.render(this.scene, this.camera);
