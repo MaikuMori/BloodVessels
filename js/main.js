@@ -55,7 +55,7 @@ var app = {
 
         // Create the camera
         // (Field of vision, Aspect ratio, nearest point, farest point)
-        this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 8000);
+        this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 10000);
 
         this.camera.position.set(0, 0, this.cameraDistanceZ);
 
@@ -325,7 +325,7 @@ var app = {
                 this.map.drawMore(this.scene);
             } else {
                 app.playerPlaceholder.position.z -= 20;
-                app.camera.position.z -= 2;
+                app.camera.position.z -= 3;
             }
         }
 

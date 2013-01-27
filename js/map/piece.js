@@ -227,8 +227,30 @@ MapPiece.prototype.drawMap = function(scene, map) {
     p2 = this.getBorderPointRight();
     speedLine.vertices.push(new THREE.Vector3(p1.x,p1.y, 0));
     speedLine.vertices.push(new THREE.Vector3(p2.x, p2.y, 0));
+
+        loader = new THREE.ColladaLoader();
+        loader.options.convertUpAxis = true;
+        var self = this;
+
+        if (parseInt(p1.x) % 10 == 0) {
+
+            loader.load('models/circular-spikey-saw.dae', function (result) {
+                app.circularSpikeySaw = result.scene;
+                app.circularSpikeySaw.scale.x = app.circularSpikeySaw.scale.y = app.circularSpikeySaw.scale.z = parseInt(Math.random() * 10) +10;
+                app.circularSpikeySaw.updateMatrix();
+
+                self.mapLines.add(app.circularSpikeySaw);
+                app.circularSpikeySaw.rotation.x = 90 * (Math.PI/180);
+                app.circularSpikeySaw.rotation.y = Math.random()*360 * (Math.PI/180);
+                app.circularSpikeySaw.position.x = p1.x + Math.random()*30;
+                app.circularSpikeySaw.position.y = p1.y;
+                app.circularSpikeySaw.position.z = 0;
+            });
+
+        }
+
     this.speedLineThree = new THREE.Line(speedLine,
-            new THREE.LineBasicMaterial({ color: 0x113377, linewidth: 2 }));
+            new THREE.LineBasicMaterial({ color: 0x113377, linewidth: 2, opacity: 0, transparent: true }));
     this.mapLines.add(this.speedLineThree);
 
     map.addMapLines(this.mapLines);
