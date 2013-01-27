@@ -28,6 +28,7 @@ function MapPiece(previousPiece) {
     this.previousPiece = previousPiece;
     this.connected_peaces = new Array();
     this.wallDistance = 50;
+    this.pieceDistance = 30;
 
 
     // initialize first piece
@@ -40,16 +41,46 @@ function MapPiece(previousPiece) {
         //this.p1 = this.previousPiece.p2;
         this.angle = this.previousPiece.angle;
         this.randomizeAngle()
-        this.p1 = new Point().randomPosAtDistance(this.previousPiece.p1, 10, this.angle);
+        this.p1 = new Point().randomPosAtDistance(this.previousPiece.p1, this.pieceDistance, this.angle);
         this.previousPiece.addChildPiece(this);
     }
 }
 
-MapPiece.prototype.randomizeAngle = function(){
-    this.angle+= Math.random()*20-10;
+(MapPiece.prototype.checkPointWithinPiece = function(pt) {
+    
+    var sign = function(p1,p2,p3) {
+        return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+    }
+    
+    var PointInTriangle = function(pt, v1, v2, v3) {
+        var b1, b2, b3;
 
-    if(this.angle > 150)this.angle = 150;
-    if(this.angle < 60) this.angle = 60;
+        b1 = sign(pt, v1, v2) < 0.0;
+        b2 = sign(pt, v2, v3) < 0.0;
+        b3 = sign(pt, v3, v1) < 0.0;
+
+        return ((b1 == b2) && (b2 == b3));
+    }
+    
+    return function(pt) {
+        
+        var p1 = this.getBorderPointLeft();
+        var p2 = this.getBorderPointRight();
+        var p3 = this.previousPiece.getBorderPointLeft();
+        var p4 = this.previousPiece.getBorderPointRight();
+        
+        return PointInTriangle(pt,p1,p2,p3) || PointInTriangle(pt,p1,p2,p4);
+    }
+})();
+
+MapPiece.prototype.randomizeAngle = function(){
+    this.angle+= Math.random()*30-20;
+    
+    if(this.angle < 0) this.angle+=360;
+    if(this.angle > 360) this.angle-=360;
+
+//    if(this.angle > 150)this.angle = 150;
+//    if(this.angle < 60) this.angle = 60;
 }
 
 MapPiece.prototype.addChildPiece = function(piece) {
@@ -64,7 +95,33 @@ MapPiece.prototype.getNextPiece = function() {
 
 MapPiece.prototype.getBorderPointRight = function() {
 
-    return new Point(this.p1.x+100,this.p1.y)
+    //return new Point(this.p1.x-100,this.p1.y)
+
+    var x1 = this.p1.x;
+    var y1 = this.p1.y;
+    var k = Math.tan((this.angle-90)*Math.PI/180);
+    //console.log(this.angle);
+
+    var x2;
+    if(this.angle > 0 && this.angle < 180) {
+       x2 = x1+5;
+    }
+    else {
+        x2 = x1-5;
+    }
+    //x2 = x1+100;
+    var y2 = k*(x2-x1)+y1;
+
+    var dx3 = x2-x1;
+    var dy3 = y2-y1;
+
+    var len = Math.sqrt((dx3)*(dx3)+(dy3)*(dy3));
+
+    dx3 = dx3/len*this.wallDistance;
+    dy3 = dy3/len*this.wallDistance;
+
+    console.log(dx3, dy3);
+    return new Point(x1+dx3,y1+dy3);
 
 
     var p1 = this.previousPiece.p1;
@@ -91,6 +148,33 @@ MapPiece.prototype.getBorderPointRight = function() {
 }
 
 MapPiece.prototype.getBorderPointLeft = function() {
+
+    var x1 = this.p1.x;
+    var y1 = this.p1.y;
+    var k = Math.tan((this.angle-90)*Math.PI/180);
+
+    var x2;
+    if(this.angle > 0 && this.angle < 180) {
+       x2 = x1+5;
+    }
+    else {
+        x2 = x1-5;
+    }
+    //x2 = x1+100;
+    var y2 = k*(x2-x1)+y1;
+
+    var dx3 = x2-x1;
+    var dy3 = y2-y1;
+
+    var len = Math.sqrt((dx3)*(dx3)+(dy3)*(dy3));
+
+    dx3 = dx3/len*(-this.wallDistance);
+    dy3 = dy3/len*(-this.wallDistance);
+
+    return new Point(x1+dx3,y1+dy3);
+
+
+
 
     return new Point(this.p1.x-100,this.p1.y)
 }
@@ -132,6 +216,15 @@ MapPiece.prototype.drawMap = function(scene, map) {
     this.mapLines.add(this.leftLineThree);
 
     //scene.add(this.mapLines);
+    
+    var speedLine = new THREE.Geometry();
+    p1 = this.getBorderPointLeft();
+    p2 = this.getBorderPointRight();
+    speedLine.vertices.push(new THREE.Vector3(p1.x,p1.y, 0));
+    speedLine.vertices.push(new THREE.Vector3(p2.x, p2.y, 0));
+    this.speedLineThree = new THREE.Line(speedLine,
+            new THREE.LineBasicMaterial({ color: 0x113377, linewidth: 2 }));
+    this.mapLines.add(this.speedLineThree);
 
     map.addMapLines(this.mapLines);
     return this;

@@ -13,7 +13,7 @@ Map.prototype.generate = function(scene) {
     
     this.firstPiece = new MapPiece();
     this.lastPiece = this.firstPiece;
-    for(var i =0;i<100;i++) {
+    for(var i =0;i<20;i++) {
         this.lastPiece = new MapPiece(this.lastPiece).drawMap(scene, this);
     }
     
