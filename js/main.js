@@ -30,9 +30,10 @@ var app = {
     init: function () {
         "use strict";
 
-        this.stats.domElement.style.position = 'absolute';
+        this.stats.domElement.style.position = 'fixed';
         this.stats.domElement.style.left = '0px';
         this.stats.domElement.style.bottom = '0px';
+        this.stats.domElement.style.zIndex = '2';
         document.body.appendChild(this.stats.domElement);
 
         // Init keyboard state.
