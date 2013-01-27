@@ -106,6 +106,7 @@ var app = {
             opacity: 1
         });
 
+        // TODO: create centralized loader
         var loader = new THREE.ColladaLoader();
         loader.options.convertUpAxis = true;
         loader.load('models/circular-saw.dae', function (result) {
@@ -116,8 +117,24 @@ var app = {
             app.scene.add(app.circularSaw);
             app.circularSaw.rotation.x = 90 * (Math.PI/180);
             app.circularSaw.rotation.z = 0;
+            app.circularSaw.position.x = -30;
             app.circularSaw.position.y = -30;
             app.circularSaw.position.z = 0;
+        });
+
+        loader = new THREE.ColladaLoader();
+        loader.options.convertUpAxis = true;
+        loader.load('models/circular-spikey-saw.dae', function (result) {
+            app.circularSpikeySaw = result.scene;
+            app.circularSpikeySaw.scale.x = app.circularSpikeySaw.scale.y = app.circularSpikeySaw.scale.z = 10;
+            app.circularSpikeySaw.updateMatrix();
+
+            app.scene.add(app.circularSpikeySaw);
+            app.circularSpikeySaw.rotation.x = 90 * (Math.PI/180);
+            app.circularSpikeySaw.rotation.z = 0;
+            app.circularSpikeySaw.position.x = 30;
+            app.circularSpikeySaw.position.y = -30;
+            app.circularSpikeySaw.position.z = 0;
         });
 
         // Map init.
@@ -234,6 +251,9 @@ var app = {
 
         if (!!this.circularSaw)
             this.circularSaw.rotation.y += dt/330+this.pulse/30;
+
+        if (!!this.circularSpikeySaw)
+            this.circularSpikeySaw.rotation.y -= dt/300;
         window.requestAnimFrame(app.mainLoop);
         this.render();
         this.stats.end();
