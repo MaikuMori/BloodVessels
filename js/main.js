@@ -106,6 +106,20 @@ var app = {
             opacity: 1
         });
 
+        var loader = new THREE.ColladaLoader();
+        loader.options.convertUpAxis = true;
+        loader.load('models/circular-saw.dae', function (result) {
+            app.circularSaw = result.scene;
+            app.circularSaw.scale.x = app.circularSaw.scale.y = app.circularSaw.scale.z = 10;
+            app.circularSaw.updateMatrix();
+
+            app.scene.add(app.circularSaw);
+            app.circularSaw.rotation.x = 90 * (Math.PI/180);
+            app.circularSaw.rotation.z = 0;
+            app.circularSaw.position.y = -30;
+            app.circularSaw.position.z = 0;
+        });
+
         // Map init.
         this.map = new Map(this.scene).generate(this.scene);
 
@@ -208,7 +222,7 @@ var app = {
             this.map.mapLines.position.y - this.moveBy.y * 0.05 * dt,
             this.map.mapLines.position.z
         );
-        
+
         this.map.OMGLines.rotation.set(
             this.map.OMGLines.rotation.x,
             this.map.OMGLines.rotation.y,
@@ -218,10 +232,12 @@ var app = {
         this.map.checkPosition(this.playerPlaceholder.position);
         this.map.drawMore(this.scene);
 
+        if (!!this.circularSaw)
+            this.circularSaw.rotation.y += dt/330+this.pulse/30;
         window.requestAnimFrame(app.mainLoop);
         this.render();
         this.stats.end();
-            },
+    },
     render: function () {
         this.renderer.render(this.scene, this.camera);
     }
