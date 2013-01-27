@@ -24,6 +24,8 @@ var app = {
         side: 0
     },
 
+    cameraZTarget: 0,
+
     gameOver: false,
 
     updateTimeDelta: function () {
@@ -233,7 +235,6 @@ var app = {
             app.playerPlaceholder.rotation.z -= this.momentum.side;
         }
         dY += this.momentum.forward;
-        app.camera.rotation.x = dY/10;
         dX = this.momentum.side;
 
         if (this.momentum.side > 0 && this.momentum.side !== 0) {
@@ -317,8 +318,17 @@ var app = {
         this.map.OMGLines.rotation.set(
             this.map.OMGLines.rotation.x,
             this.map.OMGLines.rotation.y,
-            (-this.map.playerPiece.angle+90)*Math.PI/180
+            this.map.OMGLines.rotation.z//
         );
+
+        if (parseInt(app.cameraZTarget*10) !== parseInt(app.camera.rotation.z*10)) {
+            if (app.camera.rotation.z < app.cameraZTarget)
+                app.camera.rotation.z += 0.01;
+            if (app.camera.rotation.z > app.cameraZTarget)
+                app.camera.rotation.z -= 0.01;
+        }
+        app.cameraZTarget = (this.map.playerPiece.angle+180+90)*Math.PI/180;
+
         if (!!this.playerPlaceholder) {
             this.map.checkPosition(this.playerPlaceholder.position);
             if (!app.gameOver) {
