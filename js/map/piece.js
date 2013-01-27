@@ -28,7 +28,7 @@ function MapPiece(previousPiece) {
     this.previousPiece = previousPiece;
     this.connected_peaces = new Array();
     this.wallDistance = 200;
-    this.pieceDistance = 100;
+    this.pieceDistance = 200;
 
     // initialize first piece
     if(!previousPiece) {
@@ -80,7 +80,7 @@ MapPiece.prototype.checkPointWithinPiece = (function(pt) {
 })();
 
 MapPiece.prototype.randomizeAngle = function(){
-    this.angle+= Math.random()*30-15;
+    this.angle+= Math.random()*10-5;
 
     if(this.angle < 0) this.angle+=360;
     if(this.angle > 360) this.angle-=360;
@@ -232,7 +232,7 @@ MapPiece.prototype.drawMap = function(scene, map) {
         loader.options.convertUpAxis = true;
         var self = this;
 
-        if (parseInt(p1.x) % 10 == 0) {
+        if (parseInt(p1.x) % 20 == 0) {
 
             loader.load('models/circular-spikey-saw.dae', function (result) {
                 app.circularSpikeySaw = result.scene;

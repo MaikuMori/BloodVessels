@@ -219,8 +219,8 @@ var app = {
         if (app.keyboard.pressed('down')) {
             dY -= 0.05;
         } else if (app.keyboard.pressed('up')) {
-            if (this.momentum.forward < 0.5)
-                this.momentum.forward += 0.01;
+            if (this.momentum.forward < 2)
+                this.momentum.forward += 0.007;
            // dY += Math.sin(app.playerPlaceholder.rotation.z+(90*Math.PI/180));
            // dX += Math.cos(app.playerPlaceholder.rotation.z+(90*Math.PI/180))/100;
         }
@@ -233,7 +233,7 @@ var app = {
             app.playerPlaceholder.rotation.z -= this.momentum.side;
         }
         dY += this.momentum.forward;
-        app.camera.rotation.x = dY/3;
+        app.camera.rotation.x = dY/10;
         dX = this.momentum.side;
 
         if (this.momentum.side > 0 && this.momentum.side !== 0) {
