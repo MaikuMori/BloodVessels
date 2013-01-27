@@ -261,11 +261,13 @@ var app = {
         // Figure out what's the pulse value atm.
         this.handlePulse();
         // Rotate stream as well for now.
+        /*
         var rotByRad = (-this.strugleVector.x * 1.5) * (Math.PI / 180) * dt;
         this.streamForce.set(
             (this.streamForce.x * Math.cos(rotByRad)) - (this.streamForce.y * Math.sin(rotByRad)),
             (this.streamForce.y * Math.cos(rotByRad)) + (this.streamForce.x * Math.sin(rotByRad))
         );
+        */
 
 //        this.streamForce.set(
 //            this.map.playerPiece.p1.x,
