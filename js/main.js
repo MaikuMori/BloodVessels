@@ -192,14 +192,14 @@ var app = {
             dX -= 0.05;
             app.playerPlaceholder.rotation.z += 0.1;
            // app.playerPlaceholder.rotation.z += 0.05;
-           
-           
+
+
            this.map.OMGLines.rotation.set(
             this.map.OMGLines.rotation.x,
             this.map.OMGLines.rotation.y,
             this.map.OMGLines.rotation.z - 0.05
         );
-           
+
         } else if (app.keyboard.pressed('right')) {
             dX += 0.05;
             app.playerPlaceholder.rotation.z -= 0.1;
@@ -209,7 +209,7 @@ var app = {
             this.map.OMGLines.rotation.y,
             this.map.OMGLines.rotation.z + 0.05
         );
-           
+
         }
 
         if (app.keyboard.pressed('down')) {
@@ -266,27 +266,27 @@ var app = {
             (this.streamForce.x * Math.cos(rotByRad)) - (this.streamForce.y * Math.sin(rotByRad)),
             (this.streamForce.y * Math.cos(rotByRad)) + (this.streamForce.x * Math.sin(rotByRad))
         );
-        
+
 //        this.streamForce.set(
 //            this.map.playerPiece.p1.x,
 //            this.map.playerPiece.p1.y
 //        );
-//            
+//
 //        this.streamForce.normalize();
 //        this.streamForce.multiplyScalar(1 + this.pulse);
         //this.moveBy.addVectors(this.streamForce, this.strugleVector);
         this.moveBy = this.strugleVector;
-        
+
         this.moveBy.x = this.moveBy.x*Math.sin(this.map.OMGLines.rotation.z);
         this.moveBy.y = this.moveBy.y*Math.cos(this.map.OMGLines.rotation.z);
-        
-        
+
+
         this.map.mapLines.position.set(
             this.map.mapLines.position.x - this.moveBy.x * 1 * dt,
             this.map.mapLines.position.y - this.moveBy.y * 1 * dt,
             this.map.mapLines.position.z
         );
-        
+
         this.map.OMGLines.rotation.set(
             this.map.OMGLines.rotation.x,
             this.map.OMGLines.rotation.y,
@@ -294,6 +294,7 @@ var app = {
         );
         if (!!this.playerPlaceholder) {
         this.map.checkPosition(this.playerPlaceholder.position);
+        this.playerPlaceholder.rotation.x -= 0.05 + (0.05 * this.pulse);
         //this.map.drawMore(this.scene);
         }
 
