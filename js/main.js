@@ -19,6 +19,11 @@ var app = {
 
     redBloodcells: [],
 
+    momentum: {
+        forward: 0,
+        side: 0
+    },
+
     updateTimeDelta: function () {
         "use strict";
 
@@ -161,7 +166,7 @@ var app = {
         this.map = new Map(this.scene).generate(this.scene);
 
         // Vector init.
-        this.streamForce = new THREE.Vector2(0, 1);
+        this.streamForce = new THREE.Vector2(0, 0);
         this.strugleVector = new THREE.Vector2(0, 0);
         this.moveBy = new THREE.Vector2(0, 0);
 
@@ -188,37 +193,53 @@ var app = {
     handleInputs: function () {
         var dX = 0, dY = 0;
 
-        if (app.keyboard.pressed('left')) {
-            dX -= 0.05;
-            app.playerPlaceholder.rotation.z += 0.1;
-           // app.playerPlaceholder.rotation.z += 0.05;
+        if (app.keyboard.pressed('left') && this.momentum.side > -0.5) {
+            this.momentum.side -= 0.03;
+            /*
+            this.map.OMGLines.rotation.set(
+                this.map.OMGLines.rotation.x,
+                this.map.OMGLines.rotation.y,
+                this.map.OMGLines.rotation.z - 0.05
+            );*/
 
-
-           this.map.OMGLines.rotation.set(
-            this.map.OMGLines.rotation.x,
-            this.map.OMGLines.rotation.y,
-            this.map.OMGLines.rotation.z - 0.05
-        );
-
-        } else if (app.keyboard.pressed('right')) {
-            dX += 0.05;
-            app.playerPlaceholder.rotation.z -= 0.1;
-           // app.playerPlaceholder.rotation.z -= 0.05;
-           this.map.OMGLines.rotation.set(
-            this.map.OMGLines.rotation.x,
-            this.map.OMGLines.rotation.y,
-            this.map.OMGLines.rotation.z + 0.05
-        );
+        } else if (app.keyboard.pressed('right') && this.momentum.side < 0.5) {
+            this.momentum.side += 0.03;
+            /*
+            this.map.OMGLines.rotation.set(
+                this.map.OMGLines.rotation.x,
+                this.map.OMGLines.rotation.y,
+                this.map.OMGLines.rotation.z + 0.05
+            );
+            */
 
         }
 
         if (app.keyboard.pressed('down')) {
             dY -= 0.05;
         } else if (app.keyboard.pressed('up')) {
-            dY += 0.05;
+            if (this.momentum.forward < 0.5)
+                this.momentum.forward += 0.01;
            // dY += Math.sin(app.playerPlaceholder.rotation.z+(90*Math.PI/180));
            // dX += Math.cos(app.playerPlaceholder.rotation.z+(90*Math.PI/180))/100;
         }
+
+        if (!app.keyboard.pressed('up') && this.momentum.forward >= 0.01)
+            this.momentum.forward -= 0.01;
+
+        if (!!app.playerPlaceholder) {
+            app.playerPlaceholder.rotation.x -= this.momentum.forward;
+            app.playerPlaceholder.rotation.z -= this.momentum.side;
+        }
+        dY += this.momentum.forward;
+        dX = this.momentum.side;
+
+        if (this.momentum.side > 0 && this.momentum.side !== 0) {
+            this.momentum.side -= 0.01;
+        }
+        if (this.momentum.side < 0 && this.momentum.side !== 0) {
+            this.momentum.side += 0.01;
+        }
+
         app.strugleVector.set(dX, dY);
     },
     handlePulse: function( ) {
@@ -280,8 +301,8 @@ var app = {
         //this.moveBy.addVectors(this.streamForce, this.strugleVector);
         this.moveBy = this.strugleVector;
 
-        this.moveBy.x = this.moveBy.x*Math.sin(this.map.OMGLines.rotation.z);
-        this.moveBy.y = this.moveBy.y*Math.cos(this.map.OMGLines.rotation.z);
+        this.moveBy.x = this.moveBy.x;//*Math.sin(this.map.OMGLines.rotation.z) * Math.PI/180;
+        this.moveBy.y = this.moveBy.y;//*Math.cos(this.map.OMGLines.rotation.z) * Math.PI/180;
 
 
         this.map.mapLines.position.set(
@@ -296,8 +317,9 @@ var app = {
             (-this.map.playerPiece.angle+90)*Math.PI/180
         );
         if (!!this.playerPlaceholder) {
-        this.map.checkPosition(this.playerPlaceholder.position);
-        this.map.drawMore(this.scene);
+            if (!!this.playerPlaceholder)
+                this.map.checkPosition(this.playerPlaceholder.position);
+            this.map.drawMore(this.scene);
         }
 
         if (!!this.circularSaw)
