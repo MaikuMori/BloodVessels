@@ -13,7 +13,7 @@ Map.prototype.generate = function(scene) {
     this.firstPiece = new MapPiece();
     this.playerPiece = this.firstPiece;
     this.lastPiece = this.firstPiece;
-    for(var i =0;i<40;i++) {
+    for(var i =0;i<100;i++) {
         this.lastPiece = new MapPiece(this.lastPiece).drawMap(scene, this);
         this.lastPiece.checkPointWithinPiece(new Point(0,0));
     }
@@ -30,7 +30,6 @@ Map.prototype.checkPosition = function(pos) {
     
     var mapPiece = this.firstPiece.getNextPiece();
     this.playerPos = 0;
-    //var i=0;
     while(typeof mapPiece !== 'undefined') {
         
 //        console.log(this.mapLines);
