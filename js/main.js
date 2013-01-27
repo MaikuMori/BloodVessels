@@ -294,7 +294,7 @@ var app = {
         );
         if (!!this.playerPlaceholder) {
         this.map.checkPosition(this.playerPlaceholder.position);
-        //this.map.drawMore(this.scene);
+        this.map.drawMore(this.scene);
         }
 
         if (!!this.circularSaw)
