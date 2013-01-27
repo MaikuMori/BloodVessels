@@ -24,6 +24,8 @@ var app = {
         side: 0
     },
 
+    gameOver: false,
+
     updateTimeDelta: function () {
         "use strict";
 
@@ -53,7 +55,7 @@ var app = {
 
         // Create the camera
         // (Field of vision, Aspect ratio, nearest point, farest point)
-        this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 2000);
+        this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 8000);
 
         this.camera.position.set(0, 0, this.cameraDistanceZ);
 
@@ -231,6 +233,7 @@ var app = {
             app.playerPlaceholder.rotation.z -= this.momentum.side;
         }
         dY += this.momentum.forward;
+        app.camera.rotation.x = dY/3;
         dX = this.momentum.side;
 
         if (this.momentum.side > 0 && this.momentum.side !== 0) {
@@ -317,9 +320,13 @@ var app = {
             (-this.map.playerPiece.angle+90)*Math.PI/180
         );
         if (!!this.playerPlaceholder) {
-            if (!!this.playerPlaceholder)
-                this.map.checkPosition(this.playerPlaceholder.position);
-            this.map.drawMore(this.scene);
+            this.map.checkPosition(this.playerPlaceholder.position);
+            if (!app.gameOver) {
+                this.map.drawMore(this.scene);
+            } else {
+                app.playerPlaceholder.position.z -= 20;
+                app.camera.position.z -= 2;
+            }
         }
 
         if (!!this.circularSaw)

@@ -78,6 +78,10 @@ Map.prototype.checkPosition = function(pos) {
         this.playerPos++;
     }
 
+    if (mapPiece == undefined && app.gameOver == false) {
+        app.gameOver = true;
+    }
+
 }
 
 Map.prototype.drawMore = function(scene) {
