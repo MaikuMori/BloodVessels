@@ -46,11 +46,11 @@ function MapPiece(previousPiece) {
 }
 
 MapPiece.prototype.checkPointWithinPiece = (function(pt) {
-    
+
     var sign = function(p1,p2,p3) {
         return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
     }
-    
+
     var PointInTriangle = function(pt, v1, v2, v3) {
         var b1, b2, b3;
 
@@ -60,14 +60,14 @@ MapPiece.prototype.checkPointWithinPiece = (function(pt) {
 
         return ((b1 == b2) && (b2 == b3));
     }
-    
+
     return function(pt) {
-        
+
         var p1 = this.getBorderPointLeft();
         var p2 = this.getBorderPointRight();
         var p3 = this.previousPiece.getBorderPointLeft();
         var p4 = this.previousPiece.getBorderPointRight();
-        
+
         var result = PointInTriangle(pt,p1,p2,p3) || PointInTriangle(pt,p3,p2,p4);
         if(result) {
             this.centerLineThree.material.color.set ( 0xffcc00 );
@@ -81,7 +81,7 @@ MapPiece.prototype.checkPointWithinPiece = (function(pt) {
 
 MapPiece.prototype.randomizeAngle = function(){
     this.angle+= Math.random()*30-15;
-    
+
     if(this.angle < 0) this.angle+=360;
     if(this.angle > 360) this.angle-=360;
 
@@ -221,7 +221,7 @@ MapPiece.prototype.drawMap = function(scene, map) {
     this.mapLines.add(this.leftLineThree);
 
     //scene.add(this.mapLines);
-    
+
     var speedLine = new THREE.Geometry();
     p1 = this.getBorderPointLeft();
     p2 = this.getBorderPointRight();
