@@ -5,6 +5,8 @@ function Map(scene) {
     this.OMGLines = new THREE.Object3D();
     this.OMGLines.add(this.mapLines);
     scene.add(this.OMGLines);
+    
+    this.score = 0;
 
 }
 
@@ -44,6 +46,13 @@ Map.prototype.checkPosition = function(pos) {
 //        }
 //        else if(pieceBottom && y < mapPiece.p1.y) {
         if(mapPiece.checkPointWithinPiece(new Point(-this.mapLines.position.x,-this.mapLines.position.y))) {
+            
+            if(this.playerPiece != mapPiece ) {
+                this.score+=Math.round(Math.random()*2)+1;
+                if(document.getElementById('score')) {
+                   document.getElementById('score').innerHTML = this.score;
+                }
+            }
             
             this.playerPiece = mapPiece;
             
