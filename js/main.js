@@ -269,6 +269,7 @@ var app = {
         );
         */
 
+
 //        this.streamForce.set(
 //            this.map.playerPiece.p1.x,
 //            this.map.playerPiece.p1.y
@@ -296,8 +297,7 @@ var app = {
         );
         if (!!this.playerPlaceholder) {
         this.map.checkPosition(this.playerPlaceholder.position);
-        this.playerPlaceholder.rotation.x -= 0.05 + (0.05 * this.pulse);
-        //this.map.drawMore(this.scene);
+        this.map.drawMore(this.scene);
         }
 
         if (!!this.circularSaw)
