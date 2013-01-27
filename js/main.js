@@ -17,6 +17,8 @@ var app = {
     cameraLookahead: 0,
     cameraDistanceZ: 1000,
 
+    redBloodcells: [],
+
     updateTimeDelta: function () {
         "use strict";
 
@@ -78,23 +80,24 @@ var app = {
         this.container.appendChild(this.renderer.domElement);
 
         //Add player placeholder
-        this.playerPlaceholder = new THREE.Mesh(
-            new THREE.SphereGeometry(10, 20, 20),
-            new THREE.MeshLambertMaterial({ color: 0xff00ff })
-        );
-        this.playerPlaceholder.position.x = 0;
-        this.playerPlaceholder.position.y = 0;
-        this.playerPlaceholder.position.z = 0;
-        this.scene.add(this.playerPlaceholder);
 
-        this.playerDirection = new THREE.Mesh(
-            new THREE.SphereGeometry(5, 5, 5),
-            new THREE.MeshLambertMaterial({ color: 0xff00ff })
-        );
-        this.playerDirection.position.x = 0;
-        this.playerDirection.position.y = 10;
-        this.playerDirection.position.z = 0;
-        this.playerPlaceholder.add(this.playerDirection);
+        // TODO: create centralized loader
+        var loader = new THREE.ColladaLoader();
+        loader.options.convertUpAxis = true;
+
+
+        loader.load('models/player.dae', function (result) {
+            app.playerPlaceholder = result.scene;
+            app.playerPlaceholder.scale.x = app.playerPlaceholder.scale.y = app.playerPlaceholder.scale.z = 20;
+            app.playerPlaceholder.updateMatrix();
+
+            app.scene.add(app.playerPlaceholder);
+            app.playerPlaceholder.position.x = 0;
+            app.playerPlaceholder.position.y = 0;
+            app.playerPlaceholder.position.z = 0;
+
+            app.playerPlaceholder.rotation.x = 90 * (Math.PI/180);
+        });
 
         //Draw the bottom grid
         this.geometry = new THREE.Geometry();
@@ -105,10 +108,7 @@ var app = {
             color: 0x666666,
             opacity: 1
         });
-
-        // TODO: create centralized loader
-        var loader = new THREE.ColladaLoader();
-        loader.options.convertUpAxis = true;
+        /*
         loader.load('models/circular-saw.dae', function (result) {
             app.circularSaw = result.scene;
             app.circularSaw.scale.x = app.circularSaw.scale.y = app.circularSaw.scale.z = 10;
@@ -136,6 +136,26 @@ var app = {
             app.circularSpikeySaw.position.y = -30;
             app.circularSpikeySaw.position.z = 0;
         });
+        */
+
+        for(var i =0;i<50;i++) {
+            loader = new THREE.ColladaLoader();
+            loader.options.convertUpAxis = true;
+            loader.load('models/red-blood-cell.dae', function (result) {
+                var cell = result.scene;
+                cell.scale.x = cell.scale.y = cell.scale.z = 15;
+                cell.updateMatrix();
+
+                app.scene.add(cell);
+                cell.rotation.x = Math.random() * 180 * (Math.PI/180);
+                cell.rotation.y = Math.random() * 180 * (Math.PI/180);
+                cell.rotation.z = Math.random() * 180 * (Math.PI/180);
+                cell.position.x = (Math.random() * 1000) - 500;
+                cell.position.y = (Math.random() * 1000) - 500;
+                cell.position.z = -(Math.random() * 1000);
+                app.redBloodcells.push(cell);
+            });
+        }
 
         // Map init.
         this.map = new Map(this.scene).generate(this.scene);
@@ -170,9 +190,11 @@ var app = {
 
         if (app.keyboard.pressed('left')) {
             dX -= 0.05;
+            app.playerPlaceholder.rotation.z += 0.1;
            // app.playerPlaceholder.rotation.z += 0.05;
         } else if (app.keyboard.pressed('right')) {
             dX += 0.05;
+            app.playerPlaceholder.rotation.z -= 0.1;
            // app.playerPlaceholder.rotation.z -= 0.05;
         }
 
@@ -246,7 +268,10 @@ var app = {
             this.map.OMGLines.rotation.z - rotByRad
         );
 
-        this.map.checkPosition(this.playerPlaceholder.position);
+        if (!!this.playerPlaceholder) {
+            this.map.checkPosition(this.playerPlaceholder.position);
+            this.playerPlaceholder.rotation.x -= 0.05 + (0.05 * this.pulse);
+        }
         this.map.drawMore(this.scene);
 
         if (!!this.circularSaw)
@@ -254,6 +279,19 @@ var app = {
 
         if (!!this.circularSpikeySaw)
             this.circularSpikeySaw.rotation.y -= dt/300;
+
+
+        if (!!this.redBloodcells.length > 0) {
+            for(var i =0;i<50;i++) {
+                if (app.redBloodcells[i] !== undefined && !!app.redBloodcells[i].rotation) {
+                    app.redBloodcells[i].rotation.x -= (i+1)/dt/300/100000;
+                    app.redBloodcells[i].rotation.y -= (i+1)/1000;
+                    app.redBloodcells[i].rotation.z -= (i+1)/1000;
+
+                    app.redBloodcells[i].position.y -= 0.3;
+                }
+            }
+        }
         window.requestAnimFrame(app.mainLoop);
         this.render();
         this.stats.end();
