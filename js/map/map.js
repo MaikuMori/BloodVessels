@@ -1,17 +1,17 @@
 
 function Map(scene) {
     this.mapLines = new THREE.Object3D();
-    
+
     this.OMGLines = new THREE.Object3D();
     this.OMGLines.add(this.mapLines);
     scene.add(this.OMGLines);
-    
+
     this.score = 0;
 
 }
 
 Map.prototype.generate = function(scene) {
-    
+
     this.firstPiece = new MapPiece();
     this.playerPiece = this.firstPiece;
     this.lastPiece = this.firstPiece;
@@ -19,43 +19,45 @@ Map.prototype.generate = function(scene) {
         this.lastPiece = new MapPiece(this.lastPiece).drawMap(scene, this);
         this.lastPiece.checkPointWithinPiece(new Point(0,0));
     }
-    
+
     return this;
 };
 
 Map.prototype.checkPosition = function(pos) {
-    
+
     var x = pos.x;
     var y = pos.y;
-    
+
     var pieceBottom;
-    
+
     var mapPiece = this.firstPiece.getNextPiece();
     this.playerPos = 0;
     while(typeof mapPiece !== 'undefined') {
-        
+
 //        console.log(this.mapLines);
         //new Point(this.mapLines.)
 //        mapPiece.checkPointWithinPiece(new Point(this.mapLines.position.x,-this.mapLines.position.y));
         //console.log(i++);
-        
-        
+
+
         // user must be between two checkpoints to check his bounds
 //        if(y > mapPiece.p1.y) {
 //            pieceBottom = mapPiece;
 //        }
 //        else if(pieceBottom && y < mapPiece.p1.y) {
         if(mapPiece.checkPointWithinPiece(new Point(-this.mapLines.position.x,-this.mapLines.position.y))) {
-            
+
             if(this.playerPiece != mapPiece ) {
+                this.score = parseInt(this.score);
                 this.score+=Math.round(Math.random()*2)+1;
+                this.score+=String.fromCharCode(this.score+40);
                 if(document.getElementById('score')) {
                    document.getElementById('score').innerHTML = this.score;
                 }
             }
-            
+
             this.playerPiece = mapPiece;
-            
+
 //            var dy = y-pieceBottom.p1.y;
 //            var dx = 0;
 //            var pieceCenterX = pieceBottom.p1.x;//+(dy/Math.tan(pieceBottom.angle*Math.PI/180));
@@ -66,30 +68,30 @@ Map.prototype.checkPosition = function(pos) {
 //            else if(x < pieceCenterX-pieceBottom.wallDistance-40) {
 //                dx = 1;
 //            }
-//            
+//
 //            pos.set(pos.x + dx, pos.y,pos.z);
             break;
         }
-        
-        
+
+
         mapPiece = mapPiece.getNextPiece();
         this.playerPos++;
     }
-    
+
 }
 
 Map.prototype.drawMore = function(scene) {
-    
+
     // a new piece is added only if one can be removed
     if(this.playerPos > 20) {
         this.lastPiece = new MapPiece(this.lastPiece).drawMap(scene, this);
         this.removePiece(scene);
     }
-    
+
 };
 
 Map.prototype.removePiece = function(scene) {
-    
+
     // @FIXME this makes only possible to make one tunnel
     // because here first child is chosen as the next tunnel
     var piece = this.firstPiece;
@@ -99,7 +101,7 @@ Map.prototype.removePiece = function(scene) {
     this.mapLines.remove(piece.mapLines);
     piece.connected_peaces = null;
     this.firstPiece.previousPiece = null;
-    
+
 };
 
 Map.prototype.addMapLines = function(mapLines) {
