@@ -193,47 +193,35 @@ var app = {
         this.handleInputs();
         // Figure out what's the pulse value atm.
         this.handlePulse();
-        this.streamForce.set(0, 0.05);
+        // Rotate stream as well for now.
+        var rotByRad = (-this.strugleVector.x * 1.5) * (Math.PI / 180) * dt;
+        this.streamForce.set(
+            (this.streamForce.x * Math.cos(rotByRad)) - (this.streamForce.y * Math.sin(rotByRad)),
+            (this.streamForce.y * Math.cos(rotByRad)) + (this.streamForce.x * Math.sin(rotByRad))
+        );
+        this.streamForce.normalize();
         this.streamForce.multiplyScalar(1 + this.pulse);
         this.moveBy.addVectors(this.streamForce, this.strugleVector);
 
         this.map.mapLines.position.set(
-            this.map.mapLines.position.x - this.moveBy.x * dt,
-            this.map.mapLines.position.y - this.moveBy.y * dt,
+            this.map.mapLines.position.x - this.moveBy.x * 0.05 * dt,
+            this.map.mapLines.position.y - this.moveBy.y * 0.05 * dt,
             this.map.mapLines.position.z
         );
         
         this.map.OMGLines.rotation.set(
             this.map.OMGLines.rotation.x,
             this.map.OMGLines.rotation.y,
-            this.map.OMGLines.rotation.z + this.moveBy.x * 0.05 * dt
+            this.map.OMGLines.rotation.z - rotByRad
         );
 
         this.map.checkPosition(this.playerPlaceholder.position);
         this.map.drawMore(this.scene);
-//        this.camera.position.x += this.moveBy.x * dt;
-//        this.camera.position.y += this.moveBy.y * dt;
-        this.camera.rotation.z = app.playerPlaceholder.rotation.z;
-        //this.camera.position.z
-
-        /*
-        this.camera.position.set(
-            this.playerPlaceholder.position.x,
-            this.playerPlaceholder.position.y,
-            this.playerPlaceholder.position.z + this.cameraDistanceZ //  // + app.cameraLookahea
-        );
-        this.camera.lookAt(
-            this.playerPlaceholder.position
-        );
-        */
 
         window.requestAnimFrame(app.mainLoop);
         this.render();
         this.stats.end();
-        
-//        console.log(this.map.OMGLines);
-//        debugger;
-    },
+            },
     render: function () {
         this.renderer.render(this.scene, this.camera);
     }
